@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/xzeng17/CS411-boovie/static/css/main.6640c928.chunk.css",
+    "main.js": "/xzeng17/CS411-boovie/static/js/main.54484bc9.chunk.js",
+    "main.js.map": "/xzeng17/CS411-boovie/static/js/main.54484bc9.chunk.js.map",
+    "runtime-main.js": "/xzeng17/CS411-boovie/static/js/runtime-main.c1bec393.js",
+    "runtime-main.js.map": "/xzeng17/CS411-boovie/static/js/runtime-main.c1bec393.js.map",
+    "static/js/2.50be6817.chunk.js": "/xzeng17/CS411-boovie/static/js/2.50be6817.chunk.js",
+    "static/js/2.50be6817.chunk.js.map": "/xzeng17/CS411-boovie/static/js/2.50be6817.chunk.js.map",
+    "static/js/3.f584cd7b.chunk.js": "/xzeng17/CS411-boovie/static/js/3.f584cd7b.chunk.js",
+    "static/js/3.f584cd7b.chunk.js.map": "/xzeng17/CS411-boovie/static/js/3.f584cd7b.chunk.js.map",
+    "index.html": "/xzeng17/CS411-boovie/index.html",
+    "static/css/main.6640c928.chunk.css.map": "/xzeng17/CS411-boovie/static/css/main.6640c928.chunk.css.map",
+    "static/js/2.50be6817.chunk.js.LICENSE.txt": "/xzeng17/CS411-boovie/static/js/2.50be6817.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c1bec393.js",
+    "static/js/2.50be6817.chunk.js",
+    "static/css/main.6640c928.chunk.css",
+    "static/js/main.54484bc9.chunk.js"
+  ]
+}
