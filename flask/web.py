@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
+<<<<<<< HEAD
     return 'Hello, SauerkrautFishes!'
 
 @app.route('/team')
@@ -15,3 +16,6 @@ def team():
         'Project_name' : 'Boovie',
         'Wiki_URL' : 'https://wiki.illinois.edu/wiki/display/CS411AAFA21/Team+Sauerkraut+Fish+CS+411+Project+1'
     }
+=======
+    return 'Hello, SauerkrautFishes!!!'
+>>>>>>> 1dff0df10f66cba9bf37444bddcee8827cd74f71
