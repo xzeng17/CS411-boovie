@@ -6,9 +6,8 @@ $ . venv/bin/activate
 > venv\Scripts\activate     
 
 Run Locally:        
-> $env:FLASK_APP = "flask"
-> $env:FLASK_ENV = "development"
-> flask run
+$ export FLASK_APP=flaskr && export FLASK_ENV=development && flask run      
+> $env:FLASK_APP = "flaskr";$env:FLASK_ENV = "development";flask run        
 
 Backend:        
 Staging: https://boovie-staging.herokuapp.com/      
