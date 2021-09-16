@@ -22,11 +22,6 @@ function fetchTeamInfo(clickCount, setClickCount, teamData, setTeamData) {
     })
     .catch((err) => {
         console.log("fetch team info failed: ", err.message);
-        return (
-            <div>
-                Fetch team info failed!
-            </div>
-        )
     });
 }
 
