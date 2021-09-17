@@ -16,3 +16,6 @@ Hosted at: https://xzeng17.github.io/CS411-boovie/
 Backend:        
 Staging: https://boovie-staging.herokuapp.com/      
 Production: https://boovie-production.herokuapp.com/        
+
+MySQL Local:
+run -> services.msc -> turn on MySQL service        
