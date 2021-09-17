@@ -30,7 +30,8 @@ def team():
         'Team_name:' : 'SauerkrautFish',
         'Team_members' : ['Xuankun Zeng', 'Jidong Huang', 'Yichen Liu', 'Rodrigues Rohan'],
         'Project_name' : 'Boovie',
-        'Wiki_URL' : 'https://wiki.illinois.edu/wiki/display/CS411AAFA21/Team+Sauerkraut+Fish+CS+411+Project+1'
+        'Wiki_URL' : 'https://wiki.illinois.edu/wiki/display/CS411AAFA21/Team+Sauerkraut+Fish+CS+411+Project+1',
+        'ENV_VAR' : os.getenv('test')
     }
 
 @app.route('/showtablecontent', methods=['GET'])
