@@ -2,27 +2,16 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import os
-from flaskext.mysql import MySQL
-from . import db
+
+from . import sql
 
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
 load_dotenv()
-sqlconn = None
 
-def connect_MySQL(app):
-    if os.getenv('MYSQL_LOCAL_DB_USER'):
-        mysql = MySQL()
-        app.config['MYSQL_DATABASE_USER'] = os.getenv('MYSQL_LOCAL_DB_USER')
-        app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_LOCAL_ROOT_PASSWORD')
-        app.config['MYSQL_DATABASE_DB'] = os.getenv('MYSQL_LOCAL_DB_NAME')
-        app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_LOCAL_DB_HOST')
-        mysql.init_app(app)
-        return mysql.connect()
-
-sqlconn = connect_MySQL(app)
+sqlconn = sql.connect_MySQL(app)
 
 @app.route('/')
 def hello():
@@ -41,4 +30,4 @@ def team():
 @app.route('/showtablecontent', methods=['GET'])
 def showtablecontent():
     table_name = request.args.get('table')
-    return db.read_from_table(sqlconn, table_name)
+    return sql.read_table(sqlconn, table_name)

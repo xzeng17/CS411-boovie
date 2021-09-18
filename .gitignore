@@ -1,5 +1,7 @@
 venv/
 
+notes.txt
+
 *.pyc
 __pycache__/
 
