@@ -33,6 +33,9 @@ def team():
 
 @app.route('/showtablecontent', methods=['GET'])
 def showtablecontent():
+    if "Authorization" not in request.headers or \
+        not sql.auth_login(sqlconn, request.headers["Authorization"][7:]):
+        return Response({"Unauthorized user."}, status=401, mimetype='application/json')
     table_name = request.args.get('table')
     return sql.read_table(sqlconn, table_name)
 
@@ -44,7 +47,20 @@ def regiseter():
         #print(data_json)
         return sql.register(sqlconn, data_json)
     
-    return Response("User registered successfully!", status=200, mimetype='application/json')
+    return Response({"Bad request!"}, status=400, mimetype='application/json')
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'POST':
+        data_json = json.loads(request.data)
+        #print(data_json)
+        return sql.login(sqlconn, data_json)
+    if request.method == 'GET':
+        # authenticate user
+        print(request.headers["Authorization"][7:])
+        return sql.auth_login(sqlconn, request.headers["Authorization"][7:])
+    return Response("Bad request!", status=400, mimetype='application/json')
 
 
 # only perform once, comment out before deploy        

@@ -17,8 +17,9 @@ def run(conn):
         cursor.execute(stmt)
         
         stmt = "INSERT INTO Users \
-                VALUE('Xukun', 'Cai', 'xukuncai@gmail.com', 'icansing', 'manager');"
-        cursor.execute(stmt)
+                VALUE(%s, %s, %s, %s, %s);"
+        vals = ('Xukun', 'Cai', 'xukuncai@gmail.com', 'icansing', 'manager')
+        cursor.execute(stmt, vals)
         conn.commit()
         # End create table Users
 
