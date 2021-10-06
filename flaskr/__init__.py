@@ -41,7 +41,7 @@ def showtablecontent():
 
 
 @app.route('/register', methods=['POST'])
-def regiseter():
+def register():
     if request.method == 'POST':
         data_json = json.loads(request.data)
         #print(data_json)
