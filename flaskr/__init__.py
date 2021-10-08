@@ -47,7 +47,7 @@ def register():
     if request.method == 'POST':
         data_json = json.loads(request.data)
         #print(data_json)
-        return login.register(sqlconn, data_json)
+        return sql.register(sqlconn, data_json)
     
     return Response({"Bad request!"}, status=400, mimetype='application/json')
 
