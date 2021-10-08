@@ -1,0 +1,152 @@
+from logging import raiseExceptions
+
+from .. import sql
+
+import requests
+import os
+import random
+import uuid
+import re
+
+def check(test_str):
+    #http://docs.python.org/library/re.html
+    #re.search returns None if no position in the string matches the pattern
+    #pattern to search for any character other then . a-z 0-9
+    pattern = r'[^\.a-z0-9]'
+    if re.search(pattern, test_str):
+        return False
+    else:
+        return True
+
+
+def get_top_rated_movies(page_number = 1)->list:# list of dict
+    end_point = "movie/top_rated"+"?"+"api_key="
+    api_url = os.getenv('MOVIE_API_BASE_URL')+end_point+os.getenv('MOVIE_API_KEY')\
+        +"&language=en-US"+"&page="+str(page_number)
+
+    response = requests.get(api_url)
+    response_json = response.json()
+    if "results" not in response_json or not response_json["results"]:
+        raise Exception("Fail to fetch movies from API")
+    return response_json["results"]
+
+
+def top_rated_movies(number_needed: int = 1100)->dict:
+    number_read:int = 0
+    page_number:int = 1
+
+    while number_read<number_needed:
+        response:list = None
+        try:
+            response = get_top_rated_movies(page_number)
+        except Exception as e:
+            print(str(e.args))
+            return
+
+        for movie in response: # movie is dict
+            if number_read == number_needed:
+                return
+            number_read+=1
+            yield movie
+
+        page_number += 1
+
+
+def get_movie_review(movie_id:str = '19404', page_number:int = 1)->list:
+    print("getting movie review")
+    end_point = "movie/" + movie_id + "/reviews?api_key="
+    api_url = os.getenv('MOVIE_API_BASE_URL')+end_point+os.getenv('MOVIE_API_KEY')\
+        +"&language=en-US"+"&page="+str(page_number)
+    
+    response = requests.get(api_url)
+    response_json = response.json()
+    if "results" not in response_json or not response_json["results"]:
+        raise Exception("Fail to fetch movies reviews from API")
+    return response_json["results"]
+
+
+def movie_reviews(movie_id:str)->dict:
+    number_needed:int = random.randint(2,10) # randomly pick at most 2-10 reviews for each movie
+    number_read:int = 0
+    page_number:int = 0
+    
+    while number_read < number_needed:
+        reviews:list = None
+        page_number += 1
+        try:
+            reviews:list = get_movie_review(movie_id, page_number)
+        except Exception as e:
+            print(str(e))
+            return
+        
+        for review in reviews:
+            if number_read >= number_needed:
+                return
+            number_read += 1
+            print("yielding review")
+            yield review
+    return
+
+
+def init(conn):
+    movie_inserted = 0
+    review_inserted = 0
+
+    for movie in top_rated_movies():
+
+        values = [
+            movie['id'],
+            movie['title'],
+            movie['original_language'],
+            movie['poster_path'],
+            movie['release_date'],
+            movie['vote_average'],
+            movie['overview']
+        ]
+        
+        try:
+            movie_inserted += 1
+            sql.insert_values(conn, "Movie", values)
+        except Exception as e:
+            print("############### <------ Fail To Insert Movie ------>###############")
+            print(str(e))
+            movie_inserted -= 1
+            continue
+    
+        for review in movie_reviews(str(movie['id'])):
+            username = review["author_details"]["username"]
+            if not check(username): continue
+            email = username+"@gmail.com"
+            password = os.getenv('DEFAULT_FAKE_USER_PW')
+
+            if not sql.get_user_by_email(conn, email):
+                sql.insert_values(conn, "User", [email, password, "user"])
+
+            #review_id = str(uuid.uuid4())
+            review_id = review_inserted # Need to change back
+            content = review["content"]
+
+            values = [
+                review_id,
+                content,
+                movie['id'],
+                email
+            ]
+
+            try:
+                review_inserted += 1
+                sql.insert_values(conn, "MovieReview", values)
+                values = [
+                    email,
+                    movie['id']
+                ]
+                sql.insert_values(conn, "MovieHistory", values)
+            except Exception as e:
+                review_inserted -= 1
+                print(str(e))
+                print("Failed to insert a MovieReview or MovieHistory")
+
+    return "Totally " + str(movie_inserted) + " movies inserted to the database \n"\
+        + "and " + str(review_inserted) + " movie reviews inserted to the database."
+
+

@@ -1,10 +1,7 @@
-from flaskext.mysql import MySQL
 from flask import Response
 
 def run(conn):
-
     cursor = conn.cursor()
-
     # drop all existing table
     try:
         stmt = "DROP TABLE IF EXISTS MovieHistory;"
@@ -30,7 +27,7 @@ def run(conn):
         # Begin create table User
         stmt = "CREATE TABLE User (\
                     user_email		VARCHAR(50)     PRIMARY KEY NOT NULL,\
-                    user_password	VARCHAR(50)     NOT NULL,\
+                    user_password	text            NOT NULL,\
                     role			VARCHAR(50)     \
                 );"
         cursor.execute(stmt)
@@ -63,8 +60,8 @@ def run(conn):
     try:
         # Begin create table MovieReview
         stmt = "CREATE TABLE MovieReview (\
-                    movie_review_id	INT	PRIMARY KEY,\
-                    content		    TEXT	NOT NULL,\
+                    movie_review_id	VARCHAR(255)	PRIMARY KEY,\
+                    content		    TEXT	        NOT NULL,\
                     movie_id 		INT,\
                     user_email		VARCHAR(50),\
                     FOREIGN KEY (movie_id) REFERENCES Movie(movie_id) ON DELETE CASCADE,\
@@ -79,7 +76,7 @@ def run(conn):
         # Begin create table MovieHistory
         stmt = "CREATE TABLE MovieHistory (\
                     user_email		VARCHAR(50) NOT NULL,\
-                    movie_id 		INT NOT NULL,\
+                    movie_id 		INT         NOT NULL,\
                     PRIMARY KEY (user_email, movie_id),\
                     FOREIGN KEY (movie_id) REFERENCES Movie(movie_id) ON DELETE CASCADE,\
                     FOREIGN KEY (user_email) REFERENCES User(user_email) ON DELETE CASCADE\
@@ -140,4 +137,18 @@ def run(conn):
     except Exception as e:
         return Response(str(e.args), status=400, mimetype='application/json')
 
-    return Response(str("SQL init completed!"), status=200, mimetype='application/json')
+    # try:
+        # stmt = "ALTER TABLE Movie CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci ;"
+        # cursor.execute(stmt)
+        # stmt = "ALTER TABLE Book CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci ;"
+        # cursor.execute(stmt)
+        # stmt = "ALTER TABLE User CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci ;"
+        # cursor.execute(stmt)
+        # stmt = "ALTER TABLE MovieReview CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci ;"
+        # cursor.execute(stmt)
+        # stmt = "ALTER TABLE BookReview CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci ;"
+        # cursor.execute(stmt)
+    # except Exception as e:
+    #     return Response(str(e.args), status=400, mimetype='application/json')
+
+    return Response("SQL init completed!", status=200, mimetype='application/json')
