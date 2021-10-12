@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 import os
 import json
 
-from . import sql
+from . import sql, auth
 from . import sqlschema as schema
+
+from .movie import moviedata
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -34,7 +36,7 @@ def team():
 @app.route('/showtablecontent', methods=['GET'])
 def showtablecontent():
     if "Authorization" not in request.headers or \
-        not sql.auth_login(sqlconn, request.headers["Authorization"][7:]):
+        not auth.auth_login(sqlconn, request.headers["Authorization"][7:]):
         return Response({"Unauthorized user."}, status=401, mimetype='application/json')
     table_name = request.args.get('table')
     return sql.read_table(sqlconn, table_name)
@@ -55,11 +57,11 @@ def login():
     if request.method == 'POST':
         data_json = json.loads(request.data)
         #print(data_json)
-        return sql.login(sqlconn, data_json)
+        return auth.login(sqlconn, data_json)
     if request.method == 'GET':
         # authenticate user
         print(request.headers["Authorization"][7:])
-        return sql.auth_login(sqlconn, request.headers["Authorization"][7:])
+        return auth.auth_login(sqlconn, request.headers["Authorization"][7:])
     return Response("Bad request!", status=400, mimetype='application/json')
 
 
@@ -67,3 +69,26 @@ def login():
 @app.route('/sqlschema')
 def sqlschema():
     return schema.run(sqlconn)
+
+# only perform once, comment out before deploy  
+@app.route('/initmovie')
+def initmovie():
+    return moviedata.init(sqlconn)
+
+# test function only
+@app.route('/test')
+def test():
+    sql.reconnect(sqlconn)
+    # return str(moviedata.get_movie_review())
+    # return str(moviedata.get_movie_review()[0]["author_details"]["username"])
+    return str(moviedata.select_all_movie_id(sqlconn))
+
+@app.route('/reconnectdb')
+def reconnect():
+    sqlconn.ping()
+    return "Reconnection performed"
+
+@app.route('/closedb')
+def closedb():
+    sqlconn.close()
+    return "Connection closed"

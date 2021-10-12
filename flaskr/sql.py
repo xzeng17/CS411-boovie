@@ -1,9 +1,7 @@
 from flask import Response
 from flaskext.mysql import MySQL
 
-import jwt
 import os
-import json
 
 
 def connect_MySQL(app):
@@ -27,14 +25,15 @@ def connect_MySQL(app):
         #     return mysql.connect()
 
     except Exception as e:
-        return str(e.args)
+        print(str(e.args))
+        return None
 
     return None
 
 
-def read_table(conn, table_name: str)->json:
+def read_table(conn, table_name: str)->list: # json array
     json_data = []
-
+    reconnect(conn)
     try:
         cursor = conn.cursor()
         stmt = "SELECT * FROM {table}".format(table = table_name)
@@ -47,14 +46,15 @@ def read_table(conn, table_name: str)->json:
     except Exception as e:
         return Response(str(e.args), status=400, mimetype='application/json')
 
-    return json.dumps(json_data)
+    return json_data
+    # res =  json.dumps(json_data,indent=4, sort_keys=True, default=str)
 
 
-def get_user_by_email(conn, input_email: str)->json:
+def get_user_by_email(conn, input_email: str)->list:
     json_data = []
-
+    reconnect(conn)
     cursor = conn.cursor()
-    stmt = "SELECT * FROM Users WHERE Email = \"{email}\"".format(email = input_email)
+    stmt = "SELECT * FROM User WHERE user_email = \"{email}\"".format(email = input_email)
     user_info = cursor.execute(stmt)
 
     cursor.execute(stmt)
@@ -64,37 +64,35 @@ def get_user_by_email(conn, input_email: str)->json:
     for result in user_info:
         json_data.append(dict(zip(row_headers,result)))
 
-    return json.dumps(json_data)
-
-
-def register(conn, data_json):
-        first_name  = data_json['FirstName']
-        last_tname  = data_json['LastName']
-        email       = data_json['Email']
-        password    = data_json['Password']
-        role        = data_json['Role']
-        existed_user = []
-
-        try:
-            existed_user = json.loads(get_user_by_email(conn, email))
-        except Exception as e:
-            return Response(str(e.args), status=400, mimetype='application/json')
-
-        if existed_user:
-            return Response({"User email already exists"}, status=400, mimetype='application/json')
-        
-        try:
-            insert_values(conn, 'Users', [first_name, last_tname, email, password, role])
-        except Exception as e:
-            return Response(str(e.args), status=400, mimetype='application/json')
-
-        return Response({"Registeration successful!"}, status=200, mimetype='application/json')
+    return json_data
         
 
-def insert_values(conn, table_name: str, values: list):
+def insert_string_values(conn, table_name: str, values: list):
+    # values is a list of string where each string will be enclosed by ''
+    # this function currently doesn't support mix type insertion
+    reconnect(conn)
     cursor = conn.cursor()
     stmt = "INSERT INTO {0} VALUES (%s);".format(table_name)
     cursor.execute(stmt%(", ").join(["\'"+x+"\'" for x in values]))
+    conn.commit()
+
+
+def insert_values(conn, table_name:str, values:list)->None:
+    # this function is an extended version of above function
+    # support mix type insertion
+    reconnect(conn)
+    cursor = conn.cursor()
+    stmt = "INSERT INTO {0} VALUES (%s);".format(table_name)
+
+    for i in range(len(values)):
+        value = values[i]
+        if type(value) is str:
+            value = "\""+value+"\""
+        else:
+            value = str(value)
+        values[i] = value
+
+    cursor.execute(stmt%(", ").join(values))
     conn.commit()
 
 
@@ -103,37 +101,16 @@ def delete_row(conn, table_name: str, values):
     # need implementation
 
 
-def login(conn, data_json):
-    email       = data_json['Email']
-    password    = data_json['Password']
-    existed_user = []
-    try:
-        #return read_table(conn, 'Users')
-        existed_user = json.loads(get_user_by_email(conn, email))[0]
-    except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
-
-    if not existed_user or existed_user['Password'] != password:
-        return Response({"Login failed."}, status=400, mimetype='application/json')
-    
-    encoded = jwt.encode(existed_user, os.getenv('JWT_SECRET'), algorithm="HS256")
-    print(encoded)
-    return Response(encoded, status=200, mimetype='application/json')
+def count_number_of_rows(conn, table_name: str):
+    reconnect(conn)
+    cursor = conn.cursor()
+    stmt = "SELECT COUNT(*) FROM {0};".format(table_name)
+    return str(cursor.execute(stmt))
 
 
-def auth_login(conn, token)->bool:
-    json_data = {}
-    try:
-        json_data = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=["HS256"])
-    except Exception as e:
-        return False, Response({"Auth failed."}, status=401, mimetype='application/json')
+def reconnect(conn)->None:
+    conn.ping()
 
-    existed_user = json.loads(get_user_by_email(conn, json_data["Email"]))[0]
-    if not existed_user \
-        or existed_user['Password'] != json_data['Password'] \
-        or existed_user['FirstName'] != json_data['FirstName'] \
-        or existed_user['LastName'] != json_data['LastName'] \
-        or existed_user['Role'] != json_data['Role']:
-        return False, Response("Login failed", status=401, mimetype='application/json')
 
-    return True, Response({"User verified!"}, status=200, mimetype='application/json')
+def close(conn)->None:
+    conn.close()
