@@ -8,6 +8,7 @@ import random
 import uuid
 import re
 
+
 def check(test_str):
     #http://docs.python.org/library/re.html
     #re.search returns None if no position in the string matches the pattern
@@ -88,6 +89,9 @@ def movie_reviews(movie_id:str)->dict:
     return
 
 
+# ensure at least 1037 movies added to the database
+# Only 376 reviews and 146 users are created
+# therefore create 900 dummy users, 900 reviews and histories in the end
 def init(conn):
     movie_inserted = 0
     review_inserted = 0
@@ -145,8 +149,65 @@ def init(conn):
                 review_inserted -= 1
                 print(str(e))
                 print("Failed to insert a MovieReview or MovieHistory")
+        
+    insert_fake_users(conn, review_inserted)
 
-    return "Totally " + str(movie_inserted) + " movies inserted to the database \n"\
-        + "and " + str(review_inserted) + " movie reviews inserted to the database."
+    return "Totally " + str(movie_inserted) + " real movies inserted to the database \n"\
+        + "and " + str(review_inserted) + " real movie reviews inserted to the database."
 
 
+def insert_fake_user(conn, user_id):
+    email = user_id+"@fakemail.com"
+    password = os.getenv('DEFAULT_FAKE_USER_PW')
+    sql.insert_values(conn, "User", [email, password, "user"])
+    print("a fake user %s has been inserted", email)
+
+
+def insert_fake_users(conn, review_id, number:int = 900):
+    all_movie_ids:list = select_all_movie_id(conn)
+
+    for i in range(1, number+1):
+        user_id = "DummyUserNumber"+str(i)
+        insert_fake_user(conn, user_id)
+        insert_fake_review_history(
+            conn,
+            user_id, 
+            all_movie_ids[random.randint(0, len(all_movie_ids)-1)],
+            str(review_id+i)
+            )
+
+
+def insert_fake_review_history(conn, user_id, movie_id, review_id):
+    email = user_id+"@fakemail.com"
+
+    values = [
+                review_id,
+                "This is a really nice movie. -- by bot",
+                movie_id,
+                email
+            ]
+    sql.insert_values(conn, "MovieReview", values)
+
+    values = [
+                email,
+                movie_id
+            ]
+    sql.insert_values(conn, "MovieHistory", values)
+    print("fake review %d has been inserted", review_id)
+
+def select_all_movie_id(conn)-> list:
+    json_data = []
+
+    try:
+        cursor = conn.cursor()
+        stmt = "SELECT movie_id FROM Movie"
+        cursor.execute(stmt)
+        data = cursor.fetchall()
+        for result in data:
+            json_data.append(result[0])
+
+    except Exception as e:
+        print("Cannot fetch movie_ids", str(e))
+        return json_data
+
+    return json_data

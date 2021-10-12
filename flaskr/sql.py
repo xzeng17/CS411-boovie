@@ -2,7 +2,6 @@ from flask import Response
 from flaskext.mysql import MySQL
 
 import os
-import json
 
 
 def connect_MySQL(app):
@@ -32,9 +31,9 @@ def connect_MySQL(app):
     return None
 
 
-def read_table(conn, table_name: str)->json:
+def read_table(conn, table_name: str)->list: # json array
     json_data = []
-
+    reconnect(conn)
     try:
         cursor = conn.cursor()
         stmt = "SELECT * FROM {table}".format(table = table_name)
@@ -47,12 +46,13 @@ def read_table(conn, table_name: str)->json:
     except Exception as e:
         return Response(str(e.args), status=400, mimetype='application/json')
 
-    return json.dumps(json_data)
+    return json_data
+    # res =  json.dumps(json_data,indent=4, sort_keys=True, default=str)
 
 
 def get_user_by_email(conn, input_email: str)->list:
     json_data = []
-
+    reconnect(conn)
     cursor = conn.cursor()
     stmt = "SELECT * FROM User WHERE user_email = \"{email}\"".format(email = input_email)
     user_info = cursor.execute(stmt)
@@ -70,6 +70,7 @@ def get_user_by_email(conn, input_email: str)->list:
 def insert_string_values(conn, table_name: str, values: list):
     # values is a list of string where each string will be enclosed by ''
     # this function currently doesn't support mix type insertion
+    reconnect(conn)
     cursor = conn.cursor()
     stmt = "INSERT INTO {0} VALUES (%s);".format(table_name)
     cursor.execute(stmt%(", ").join(["\'"+x+"\'" for x in values]))
@@ -79,6 +80,7 @@ def insert_string_values(conn, table_name: str, values: list):
 def insert_values(conn, table_name:str, values:list)->None:
     # this function is an extended version of above function
     # support mix type insertion
+    reconnect(conn)
     cursor = conn.cursor()
     stmt = "INSERT INTO {0} VALUES (%s);".format(table_name)
 
@@ -100,6 +102,15 @@ def delete_row(conn, table_name: str, values):
 
 
 def count_number_of_rows(conn, table_name: str):
+    reconnect(conn)
     cursor = conn.cursor()
     stmt = "SELECT COUNT(*) FROM {0};".format(table_name)
     return str(cursor.execute(stmt))
+
+
+def reconnect(conn)->None:
+    conn.ping()
+
+
+def close(conn)->None:
+    conn.close()

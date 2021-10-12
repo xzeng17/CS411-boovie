@@ -78,5 +78,17 @@ def initmovie():
 # test function only
 @app.route('/test')
 def test():
-    return str(moviedata.get_movie_review())
-    return str(moviedata.get_movie_review()[0]["author_details"]["username"])
+    sql.reconnect(sqlconn)
+    # return str(moviedata.get_movie_review())
+    # return str(moviedata.get_movie_review()[0]["author_details"]["username"])
+    return str(moviedata.select_all_movie_id(sqlconn))
+
+@app.route('/reconnectdb')
+def reconnect():
+    sqlconn.ping()
+    return "Reconnection performed"
+
+@app.route('/closedb')
+def closedb():
+    sqlconn.close()
+    return "Connection closed"

@@ -16,6 +16,7 @@ def register(conn, data_json):
         existed_user = []
 
         try:
+            sql.reconnect(conn)
             existed_user = sql.get_user_by_email(conn, email)
         except Exception as e:
             return Response(str(e.args), status=400, mimetype='application/json')
@@ -24,6 +25,7 @@ def register(conn, data_json):
             return Response({"User email already exists"}, status=400, mimetype='application/json')
         
         try:
+            sql.reconnect(conn)
             sql.insert_string_values(conn, 'Users', [email, password, role])
         except Exception as e:
             return Response(str(e.args), status=400, mimetype='application/json')
@@ -34,16 +36,15 @@ def register(conn, data_json):
 def login(conn, data_json):
     email       = data_json['Email']
     password    = data_json['Password']
-    print(password)
+    
     existed_user = []
 
     try:
         #return read_table(conn, 'Users')
+        sql.reconnect(conn)
         existed_user = sql.get_user_by_email(conn, email)[0]
     except Exception as e:
         return Response(str(e.args), status=400, mimetype='application/json')
-
-    print(existed_user['user_password'])
 
     if not existed_user or existed_user['user_password'] != password:
         return Response({"Login failed."}, status=400, mimetype='application/json')
@@ -60,6 +61,7 @@ def auth_login(conn, token):
     except Exception as e:
         return Response({"Auth failed."}, status=401, mimetype='application/json')
 
+    sql.reconnect(conn)
     existed_user = sql.get_user_by_email(conn, json_data["user_email"])[0]
     if not existed_user \
         or existed_user['user_password'] != json_data['user_password'] \
