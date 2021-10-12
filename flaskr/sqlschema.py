@@ -1,6 +1,7 @@
 from flask import Response
 
 def run(conn):
+    conn.ping() # refresh connection
     cursor = conn.cursor()
     # drop all existing table
     try:
