@@ -10,6 +10,7 @@ import json
 def register(conn, data_json):
         # first_name  = data_json['FirstName']
         # last_tname  = data_json['LastName']
+        print(data_json)
         email       = data_json['Email']
         password    = data_json['Password']
         role        = data_json['Role']
@@ -26,10 +27,10 @@ def register(conn, data_json):
         
         try:
             sql.reconnect(conn)
-            sql.insert_string_values(conn, 'Users', [email, password, role])
+            sql.insert_string_values(conn, 'User', [email, password, role])
         except Exception as e:
             return Response(str(e.args), status=400, mimetype='application/json')
-
+        
         return Response({"Registeration successful!"}, status=200, mimetype='application/json')
 
 
