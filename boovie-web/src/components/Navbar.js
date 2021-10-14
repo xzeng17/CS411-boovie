@@ -3,16 +3,29 @@ import UserProfile from "./UserProfile.js";
 import Search from "./Search.js";
 import BookHistory from "./BookHistory.js";
 import MovieHistory from "./MovieHistory.js";
+import Login from "./Login.js";
+import Register from "./Register.js";
 import React from "react";
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
+    Link,
+    Redirect
   } from "react-router-dom";
 
 function Navbar(props) {
-    const { isLoggedIn, handleLogout } = props;
+    const {handleLogin, isLoggedIn, handleLogout } = props;
+
+    const showLogin = ()=> {
+        return (
+            isLoggedIn ?
+                <Redirect to="/UserProfile" />
+            :
+                <Login handleLogin={handleLogin} />
+        )
+    }
+
     return (
         <Router>
         <div>
@@ -22,20 +35,27 @@ function Navbar(props) {
                 <Link to="/Search">Search</Link>
                 <Link to="/BookHistory">BookHistory</Link>
                 <Link to="/MovieHistory">MovieHistory</Link>
+                {isLoggedIn
+                    ? <button type="button" onClick={handleLogout}> Logout </button>
+                    : <Link to="/Login">Login</Link>}
             </ul>
         </div>
         <Switch>
-            <Route exact path="/UserProfile">
+            <Route path="/UserProfile">
                 <UserProfile />
             </Route>
-            <Route exact path="/Search">
+            <Route path="/Search">
                 <Search />
             </Route>
-            <Route exact path="/BookHistory">
+            <Route path="/BookHistory">
                 <BookHistory />
             </Route>
-            <Route exact path="/MovieHistory">
+            <Route path="/MovieHistory">
                 <MovieHistory />
+            </Route>
+            <Route path="/Login" render={showLogin} />
+            <Route path="/Register">
+                <Register />
             </Route>
         </Switch>
         </Router>

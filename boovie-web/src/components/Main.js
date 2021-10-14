@@ -2,7 +2,7 @@ import "../styles/Main.css";
 import React, { useState } from "react";
 
 import Axios from 'axios';
-import {STAGING_DOMAIN_URL, TEAM_ENDPOINT} from "../assets/constants";
+import {STAGING_DOMAIN_URL, TEAM_ENDPOINT, LOCALHOST_URL} from "../assets/constants";
 import { Route, Switch, Redirect } from "react-router";
 
 import Login from "./Main.js";
@@ -19,7 +19,7 @@ function fetchTeamInfo(clickCount, setClickCount, teamData, setTeamData) {
 
     const opt = {
         method: "GET",
-        url: STAGING_DOMAIN_URL+TEAM_ENDPOINT,
+        url: LOCALHOST_URL+TEAM_ENDPOINT,
       };
    
     Axios(opt)
