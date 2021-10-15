@@ -91,15 +91,16 @@ def run(conn):
     try:
         # Begin create table Book
         stmt = "CREATE TABLE Book (\
-                    isbn		    INT PRIMARY KEY NOT NULL,\
-                    title 			VARCHAR(50) NOT NULL,\
-                    author  		VARCHAR(50) NOT NULL,\
+                    id              VARCHAR(50) PRIMARY KEY NOT NULL,\
+                    isbn		    VARCHAR(50),\
+                    title 			TEXT NOT NULL,\
+                    author  		TEXT NOT NULL,\
                     language		VARCHAR(50) NOT NULL,\
                     image_url		TEXT        NOT NULL,\
-                    published_date	DATE        NOT NULL,\
+                    published_date	VARCHAR(50) NOT NULL,\
                     page_count		INT,\
                     description		TEXT,\
-                    publisher		VARCHAR(50)\
+                    publisher		TEXT\
                 );"
 
         cursor.execute(stmt)
