@@ -7,7 +7,7 @@ def init(conn):
     i = 1
     idSet = set()
     while i <= 500:
-        with urllib.request.urlopen("https://www.googleapis.com/books/v1/volumes?key=AIzaSyDscDpqg9zmqk2MDFGXrpWS2tofvUv14iM&q=science&max_results=40&start_index="+str(i)) as url:
+        with urllib.request.urlopen("https://www.googleapis.com/books/v1/volumes?q=science&max_results=40&start_index="+str(i)) as url:
             data = json.loads(url.read().decode())
             if 'items' in data:
                 books = data["items"]
