@@ -105,7 +105,6 @@ def closedb():
     sqlconn.close()
     return "Connection closed"
 
-
 @app.route('/movie/history', methods=['GET'])
 def get_movie_history():
     if request.method == 'GET':
@@ -152,8 +151,6 @@ def top_users():
         }
     return Response(json.dumps(data, indent=4, sort_keys=True, default=str), status=200, mimetype='application/json')
 @app.route('/insertbooks')
-def insertbooks():
-    return bookdata.init(sqlconn)
 
 @app.route('/searchbooks', methods=['GET', 'POST'])
 def searchbooks():
