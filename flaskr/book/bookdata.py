@@ -58,7 +58,7 @@ def init(conn):
     time.sleep(360)  
     i = 1 
     while i <= 500:
-        with urllib.request.urlopen("https://www.googleapis.com/books/v1/volumes?key=AIzaSyDscDpqg9zmqk2MDFGXrpWS2tofvUv14iM&q=country&max_results=40&start_index="+str(i)) as url:
+        with urllib.request.urlopen("https://www.googleapis.com/books/v1/volumes?q=country&max_results=40&start_index="+str(i)) as url:
             data = json.loads(url.read().decode())
             if 'items' in data:
                 books = data["items"]
@@ -107,7 +107,7 @@ def init(conn):
                 i = i + 40
     i = 1 
     while i <= 50:
-        with urllib.request.urlopen("https://www.googleapis.com/books/v1/volumes?key=AIzaSyDscDpqg9zmqk2MDFGXrpWS2tofvUv14iM&q=classic&max_results=40&start_index="+str(i)) as url:
+        with urllib.request.urlopen("https://www.googleapis.com/books/v1/volumes?q=classic&max_results=40&start_index="+str(i)) as url:
             data = json.loads(url.read().decode())
             if 'items' in data:
                 books = data["items"]
