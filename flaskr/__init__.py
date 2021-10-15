@@ -8,6 +8,7 @@ from . import sql, auth
 from . import sqlschema as schema
 
 from .movie import moviedata
+from .book import bookdata, bookreview
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -92,3 +93,11 @@ def reconnect():
 def closedb():
     sqlconn.close()
     return "Connection closed"
+
+@app.route('/insertbooks')
+def insertbooks():
+    return bookdata.init(sqlconn)
+
+@app.route('/insertbookreviews')
+def insertbookreviews():
+    return bookreview.init(sqlconn)
