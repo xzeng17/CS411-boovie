@@ -23,7 +23,7 @@ def run(conn):
         stmt = "DROP TABLE IF EXISTS User;"
         cursor.execute(stmt)
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
         # Begin create table User
@@ -41,7 +41,7 @@ def run(conn):
         conn.commit()
         # End create table User
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
         # Begin create table Movie
@@ -60,7 +60,7 @@ def run(conn):
         cursor.execute(stmt)
         # End create table Movie
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
         # Begin create table MovieReview
@@ -75,7 +75,7 @@ def run(conn):
         cursor.execute(stmt)
         # End create table MovieReview
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
         # Begin create table MovieHistory
@@ -90,7 +90,7 @@ def run(conn):
         cursor.execute(stmt)
     # End create table MovieHistory
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
     
     try:
         # Begin create table Book
@@ -109,7 +109,7 @@ def run(conn):
         cursor.execute(stmt)
     # End create table Book
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
         # Begin create table BookReview
@@ -125,7 +125,7 @@ def run(conn):
         cursor.execute(stmt)
     # End create table BookReview
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
         # Begin create table BookHistory
@@ -140,7 +140,7 @@ def run(conn):
         cursor.execute(stmt)
     # End create table BookHistory
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
+        return Response(str(e.args), status=500, mimetype='application/json')
 
     # try:
         # stmt = "ALTER TABLE Movie CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci ;"
