@@ -1,6 +1,7 @@
 from logging import raiseExceptions
 
 from .. import sql
+from .. import auth
 
 import requests
 import os
@@ -89,6 +90,17 @@ def movie_reviews(movie_id:str)->dict:
     return
 
 
+def get_video_url(movie_id:str)->str:
+    end_point = "movie/{}/videos?api_key={}".format(movie_id, os.getenv('MOVIE_API_KEY'))
+    url = os.getenv('MOVIE_API_BASE_URL')+end_point
+    response = requests.get(url)
+    response_json:dict = response.json()
+    result:dict = response_json["results"][0]
+    if result["site"] != "YouTube":
+        return "N/A"
+    return result["key"]
+
+
 # ensure at least 1037 movies added to the database
 # Only 376 reviews and 146 users are created
 # therefore create 900 dummy users, 900 reviews and histories in the end
@@ -97,17 +109,27 @@ def init(conn):
     review_inserted = 0
 
     for movie in top_rated_movies():
+        # If want to add video, use movie id to get video key from another api
+        video_url = "N/A"
+        try:
+            video_url = get_video_url(movie['id'])
+        except Exception as e:
+            print(str(e), "Cannot insert movie video url!")
 
-        values = [
-            movie['id'],
-            movie['title'],
-            movie['original_language'],
-            movie['poster_path'],
-            movie['release_date'],
-            movie['vote_average'],
-            movie['overview']
-        ]
-        
+        values = []
+        try:
+            values.append(movie['id'])
+            values.append(movie['title'])
+            values.append(movie['original_language'])
+            values.append(movie['poster_path'])
+            values.append(video_url)
+            values.append(movie['release_date'])
+            values.append(movie['vote_average'])
+            values.append(movie['overview'])
+        except Exception as e:
+            print("############### <------ Fail To Extract Movie Info ------>###############")
+            continue
+
         try:
             movie_inserted += 1
             sql.insert_values(conn, "Movie", values)
@@ -124,7 +146,7 @@ def init(conn):
             password = os.getenv('DEFAULT_FAKE_USER_PW')
 
             if not sql.get_user_by_email(conn, email):
-                sql.insert_values(conn, "User", [email, password, "user"])
+                sql.insert_values(conn, "User", [email, auth.md5_encode(password), "user"])
 
             #review_id = str(uuid.uuid4())
             review_id = review_inserted # Need to change back
@@ -159,7 +181,7 @@ def init(conn):
 def insert_fake_user(conn, user_id):
     email = user_id+"@fakemail.com"
     password = os.getenv('DEFAULT_FAKE_USER_PW')
-    sql.insert_values(conn, "User", [email, password, "user"])
+    sql.insert_values(conn, "User", [email, auth.md5_encode(password), "user"])
     print("a fake user %s has been inserted", email)
 
 
@@ -194,6 +216,7 @@ def insert_fake_review_history(conn, user_id, movie_id, review_id):
             ]
     sql.insert_values(conn, "MovieHistory", values)
     print("fake review %d has been inserted", review_id)
+
 
 def select_all_movie_id(conn)-> list:
     json_data = []

@@ -1,4 +1,5 @@
 from flask import Response
+from . import auth
 
 def run(conn):
     conn.ping() # refresh connection
@@ -28,14 +29,14 @@ def run(conn):
         # Begin create table User
         stmt = "CREATE TABLE User (\
                     user_email		VARCHAR(50)     PRIMARY KEY NOT NULL,\
-                    user_password	text            NOT NULL,\
-                    role			VARCHAR(50)     \
+                    user_password	VARCHAR(50)    NOT NULL,\
+                    role			VARCHAR(50)    NOT NULL \
                 );"
         cursor.execute(stmt)
         
         stmt = "INSERT INTO User \
                 VALUE(%s, %s, %s);"
-        vals = ('xukuncai@gmail.com', 'icansing', 'manager')
+        vals = ('xukuncai@gmail.com', auth.md5_encode('icansing'), 'manager')
         cursor.execute(stmt, vals)
         conn.commit()
         # End create table User
@@ -44,11 +45,14 @@ def run(conn):
 
     try:
         # Begin create table Movie
+        # image_url: only poster_path included
+        # video_url: only youtube key included
         stmt = "CREATE TABLE Movie (\
                     movie_id 		INT         PRIMARY KEY,\
                     title 			VARCHAR(50) NOT NULL,\
                     language		VARCHAR(50) NOT NULL,\
                     image_url		TEXT        NOT NULL,\
+                    video_url       TEXT        NOT NULL,\
                     published_date	DATE        NOT NULL,\
                     rating			REAL,\
                     description		TEXT\
