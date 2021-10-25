@@ -1,3 +1,4 @@
+import json
 from flask import Response
 from flaskext.mysql import MySQL
 
@@ -63,7 +64,7 @@ def get_user_by_email(conn, input_email: str)->list:
 
     for result in user_info:
         json_data.append(dict(zip(row_headers,result)))
-
+    print(json_data)
     return json_data
         
 

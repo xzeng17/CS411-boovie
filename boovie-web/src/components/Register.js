@@ -28,7 +28,7 @@ function Register(props) {
             showAlert("Invalid Email!");
             return;
         }
-        if (input_password != input_repeatPassword) {
+        if (input_password !== input_repeatPassword) {
             showAlert("Passwords do not match!");
             return;
         }

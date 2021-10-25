@@ -15,7 +15,7 @@ import {
   } from "react-router-dom";
 
 function Navbar(props) {
-    const {handleLogin, isLoggedIn, handleLogout } = props;
+    const {handleLogin, isLoggedIn, userRole, handleLogout } = props;
 
     const showLogin = ()=> {
         return (
@@ -42,7 +42,7 @@ function Navbar(props) {
         </div>
         <Switch>
             <Route path="/UserProfile">
-                <UserProfile />
+                <UserProfile isLoggedIn={isLoggedIn} userRole={userRole}/>
             </Route>
             <Route path="/Search">
                 <Search />

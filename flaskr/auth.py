@@ -5,6 +5,7 @@ from . import sql
 import jwt
 import os
 import hashlib
+import json
 
 
 def register(conn, data_json):
@@ -41,18 +42,22 @@ def login(conn, data_json):
     existed_user = []
 
     try:
-        #return read_table(conn, 'Users')
+        #return read_table(conn, 'User')
         sql.reconnect(conn)
         existed_user = sql.get_user_by_email(conn, email)[0]
     except Exception as e:
-        return Response(str(e.args), status=401, mimetype='application/json')
-
+        return Response({"Login failed."}, status=401, mimetype='application/json')
+    
     if not existed_user or existed_user['user_password'] != password:
         return Response({"Login failed."}, status=401, mimetype='application/json')
     
     encoded = jwt.encode(existed_user, os.getenv('JWT_SECRET'), algorithm="HS256")
-    print(encoded)
-    return Response(encoded, status=200, mimetype='application/json')
+
+    resp = {
+        "TOKEN": encoded,
+        "ROLE": existed_user['role']
+    }
+    return Response(json.dumps(resp), status=200, mimetype='application/json')
 
 
 def auth_login(conn, token):
