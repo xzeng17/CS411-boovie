@@ -5,11 +5,12 @@ import Navbar from './components/Navbar';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("TOKEN_KEY") ? true : false);
-  const [userRole, setRole] = useState(null);
+  const [userRole, setRole] = useState(localStorage.getItem("ROLE") ? localStorage.getItem("ROLE") : null);
  
   const logout = () => {
     console.log("log out");
     localStorage.removeItem("TOKEN_KEY");
+    localStorage.removeItem("ROLE");
     setIsLoggedIn(false);
     setRole(null);
   };
@@ -17,6 +18,7 @@ function App() {
   const loggedIn = (response) => {
     if (response["TOKEN"]) {
       localStorage.setItem("TOKEN_KEY", response["TOKEN"]);
+      localStorage.setItem("ROLE", response["ROLE"]);
       setIsLoggedIn(true);
       setRole(response["ROLE"]);
     }
