@@ -6,7 +6,7 @@ import json
 
 from . import sql, auth
 from . import sqlschema as schema
-
+from .movie import moviequery
 from .movie import moviedata
 
 app = Flask(__name__)
@@ -48,7 +48,6 @@ def register():
         data_json = json.loads(request.data)
         #print(data_json)
         return auth.register(sqlconn, data_json)
-    
     return Response({"Bad request!"}, status=400, mimetype='application/json')
 
 
@@ -60,9 +59,16 @@ def login():
         return auth.login(sqlconn, data_json)
     if request.method == 'GET':
         # authenticate user
-        print(request.headers["Authorization"][7:])
-        return auth.auth_login(sqlconn, request.headers["Authorization"][7:])
-    return Response("Bad request!", status=400, mimetype='application/json')
+        token = ""
+        try:
+            token = request.headers["Authorization"][7:]
+        except Exception as e:
+            return Response({"Login failed"}, status=401, mimetype='application/json')
+        
+        if auth.auth_login(sqlconn, token):
+            print(token)
+            return Response({"User verified!"}, status=200, mimetype='application/json')
+        return Response({"Login failed"}, status=401, mimetype='application/json')
 
 
 # only perform once, comment out before deploy        
@@ -70,10 +76,12 @@ def login():
 def sqlschema():
     return schema.run(sqlconn)
 
+
 # only perform once, comment out before deploy  
 @app.route('/initmovie')
 def initmovie():
     return moviedata.init(sqlconn)
+
 
 # test function only
 @app.route('/test')
@@ -83,12 +91,52 @@ def test():
     # return str(moviedata.get_movie_review()[0]["author_details"]["username"])
     return str(moviedata.select_all_movie_id(sqlconn))
 
+
 @app.route('/reconnectdb')
 def reconnect():
     sqlconn.ping()
     return "Reconnection performed"
 
+
 @app.route('/closedb')
 def closedb():
     sqlconn.close()
     return "Connection closed"
+
+
+@app.route('/getMovieHistory', methods=['GET'])
+def get_movie_history():
+    if request.method == 'GET':
+        # authenticate user
+        token = ""
+        try:
+            token = request.headers["Authorization"][7:]
+        except Exception as e:
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+        if not auth.auth_login(sqlconn, token):
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+        # end of authentication
+
+        user_info = auth.decode_token(token)
+
+        data = json.dumps(moviequery.get_movie_history_by_email(sqlconn, user_info["user_email"]), indent=4, sort_keys=True, default=str)
+        return Response(data, status=200, mimetype='application/json')
+
+
+@app.route('/getMovieDetails', methods=['GET'])
+def get_movie_details():
+    if request.method == 'GET':
+        # authenticate user
+        token = ""
+        try:
+            token = request.headers["Authorization"][7:]
+        except Exception as e:
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+        if not auth.auth_login(sqlconn, token):
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+        # end of authentication
+    
+    data = json.dumps(moviequery.get_movie_details(sqlconn, request.args.get('movie_id')), indent=4, sort_keys=True, default=str)
+    return Response(data, status=200, mimetype='application/json')

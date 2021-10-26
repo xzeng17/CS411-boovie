@@ -13,7 +13,6 @@ function Login(props) {
     const [input_password, setPassword] = useState(null)
 
     const submitLogin = ()=> {
-        
         const opt = {
             method: "POST",
             url: LOCALHOST_URL+LOGIN_ENDPOINT,
@@ -50,17 +49,17 @@ function Login(props) {
                 Login page
             </div>
             <div>
-                <label for="name">User Email: 
+                <label htmlFor="name">User Email: 
                     <input type="text" onChange={(event)=>setUseremail(event.target.value)}/>
                 </label>
-                <label for="name">User Password: 
+                <label htmlFor="name">User Password: 
                     <input type="password" onChange={(event)=>setPassword(event.target.value)} />
                 </label>
                 <button type="button" onClick={submitLogin}>
                     Login
                 </button>
             </div>
-            <div class="login-msg" />
+            <div className="login-msg" />
 
             <Popup trigger={<button> New User? Register Here! </button>} position="center">
                 <Register />

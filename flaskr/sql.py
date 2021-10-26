@@ -43,10 +43,8 @@ def read_table(conn, table_name: str)->list: # json array
         data = cursor.fetchall()
         for result in data:
             json_data.append(dict(zip(row_headers,result)))
-
     except Exception as e:
-        return Response(str(e.args), status=400, mimetype='application/json')
-
+        print(str(e.args))
     return json_data
     # res =  json.dumps(json_data,indent=4, sort_keys=True, default=str)
 
