@@ -104,7 +104,7 @@ def closedb():
     return "Connection closed"
 
 
-@app.route('/getMovieHistory', methods=['GET'])
+@app.route('/movie/history', methods=['GET'])
 def get_movie_history():
     if request.method == 'GET':
         # authenticate user
@@ -120,11 +120,11 @@ def get_movie_history():
 
         user_info = auth.decode_token(token)
 
-        data = json.dumps(moviequery.get_movie_history_by_email(sqlconn, user_info["user_email"]), indent=4, sort_keys=True, default=str)
+        data = json.dumps(moviequery.get_movie_histories_by_email(sqlconn, user_info["user_email"]), indent=4, sort_keys=True, default=str)
         return Response(data, status=200, mimetype='application/json')
 
 
-@app.route('/getMovieDetails', methods=['GET'])
+@app.route('/movie/details', methods=['GET'])
 def get_movie_details():
     if request.method == 'GET':
         # authenticate user
@@ -137,6 +137,15 @@ def get_movie_details():
         if not auth.auth_login(sqlconn, token):
             return Response({"Not authorized."}, status=401, mimetype='application/json')
         # end of authentication
-    
     data = json.dumps(moviequery.get_movie_details(sqlconn, request.args.get('movie_id')), indent=4, sort_keys=True, default=str)
+    print("data: ", data)
     return Response(data, status=200, mimetype='application/json')
+
+
+@app.route('/movie/topusers')
+def top_users():
+    data = {
+        "top_3_rating": moviequery.top_3_user_watching_3point_movie(sqlconn), 
+        "top_3_rating_recent": moviequery.top_3_user_watching_recent_3point_movie(sqlconn)
+        }
+    return Response(json.dumps(data, indent=4, sort_keys=True, default=str), status=200, mimetype='application/json')

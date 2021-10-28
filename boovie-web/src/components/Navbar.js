@@ -60,7 +60,7 @@ function Navbar(props) {
                     <Register />
                 </Route>
                 <Route path="/MovieItem">
-                    <MovieItem movie_id={selectedId}/>
+                    <MovieItem movie_id={selectedId} isLoggedIn={isLoggedIn}/>
                 </Route>
             </Switch>
         </Router>

@@ -11,5 +11,3 @@ export const LOGIN_ENDPOINT = "login"
 export const REGISTER_ENDPOINT = "register"
 
 export const MOVIE_IMG_BASE = "https://image.tmdb.org/t/p/w500/"
-
-export const MOVIE_VIDEO_BASE = "getMovieDetails?movie_id="
