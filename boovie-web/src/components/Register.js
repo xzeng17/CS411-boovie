@@ -1,4 +1,4 @@
-import React, { useState, Button }  from "react";
+import React, { useState }  from "react";
 
 import {LOCALHOST_URL, REGISTER_ENDPOINT} from "../assets/constants.js";
 

@@ -1,0 +1,16 @@
+img {
+    border: 1px solid #ddd;
+    border-radius: 1px;
+    padding: 1px;
+    width: 100px;
+}
+
+table {
+    margin: 50pt;
+    padding-left: 100pt;
+    padding-right: 100pt;
+}
+
+#movie-item {
+    cursor: pointer;
+}

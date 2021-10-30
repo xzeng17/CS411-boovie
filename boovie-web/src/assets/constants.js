@@ -9,3 +9,5 @@ export const TEAM_ENDPOINT = "team";
 export const LOGIN_ENDPOINT = "login"
 
 export const REGISTER_ENDPOINT = "register"
+
+export const MOVIE_IMG_BASE = "https://image.tmdb.org/t/p/w500/"

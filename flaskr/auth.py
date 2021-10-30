@@ -21,17 +21,20 @@ def register(conn, data_json):
             sql.reconnect(conn)
             existed_user = sql.get_user_by_email(conn, email)
         except Exception as e:
+            sql.close(conn)
             return Response(str(e.args), status=500, mimetype='application/json')
 
         if existed_user:
+            sql.close(conn)
             return Response({"User email already exists"}, status=403, mimetype='application/json')
         
         try:
             sql.reconnect(conn)
             sql.insert_string_values(conn, 'User', [email, md5_encode(password), role])
         except Exception as e:
+            sql.close(conn)
             return Response(str(e.args), status=500, mimetype='application/json')
-        
+        sql.close(conn)
         return Response({"Registeration successful!"}, status=200, mimetype='application/json')
 
 
@@ -57,26 +60,32 @@ def login(conn, data_json):
         "TOKEN": encoded,
         "ROLE": existed_user['role']
     }
+    sql.close(conn)
     return Response(json.dumps(resp), status=200, mimetype='application/json')
 
 
-def auth_login(conn, token):
+def auth_login(conn, token)->bool:
     json_data = {}
-    try:
-        json_data = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=["HS256"])
-    except Exception as e:
-        return Response({"Auth failed."}, status=401, mimetype='application/json')
 
+    try:
+        json_data = decode_token(token)
+    except Exception as e:
+        return False
+    
     sql.reconnect(conn)
     existed_user = sql.get_user_by_email(conn, json_data["user_email"])[0]
     if not existed_user \
-        or existed_user['user_password'] != md5_encode(json_data['user_password']) \
+        or existed_user['user_password'] != json_data['user_password'] \
         or existed_user['role'] != json_data['role']:
-        return Response("Login failed", status=401, mimetype='application/json')
-
-    return Response({"User verified!"}, status=200, mimetype='application/json')
+        return False
+    sql.close(conn)
+    return True
 
 
 def md5_encode(password:str)->str:
     result = hashlib.md5(password.encode())
     return result.hexdigest()
+
+
+def decode_token(token)->dict:
+    return jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=["HS256"])

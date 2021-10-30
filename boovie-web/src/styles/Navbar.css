@@ -1,0 +1,12 @@
+#Top-bar {
+    background-color:lightskyblue;
+    padding: 5pt;
+}
+
+.Top-bar-button {
+    font-size: medium;
+    font-weight: 500;
+    padding: 15pt;
+    margin: 15pt;
+    cursor: pointer;
+}
