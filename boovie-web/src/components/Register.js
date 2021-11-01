@@ -5,9 +5,9 @@ import {LOCALHOST_URL, REGISTER_ENDPOINT} from "../assets/constants.js";
 import Axios from 'axios';
 
 function Register(props) {
-    const [input_useremail, setUseremail] = useState(null)
-    const [input_password, setPassword] = useState(null)
-    const [input_repeatPassword, setRepeatPassword] = useState(null)
+    const [input_useremail, setUseremail] = useState('')
+    const [input_password, setPassword] = useState('')
+    const [input_repeatPassword, setRepeatPassword] = useState('')
     const [disabled, setDisabled] = useState(false)
 
     const validateEmail = (email)=> {
@@ -20,7 +20,7 @@ function Register(props) {
     }
 
     const submitRegister = ()=> {
-        if (input_useremail===null || input_password===null || input_repeatPassword===null) {
+        if (input_useremail==='' || input_password==='' || input_repeatPassword==='') {
             showAlert("All fileds are required!");
             return;
         }
