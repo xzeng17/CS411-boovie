@@ -161,6 +161,15 @@ def searchbooks():
 def getmovies():
     return sql.getmovies(sqlconn)
 
+@app.route('/searchbooks', methods=['GET', 'POST'])
+def searchbooks():
+    query = request.args.get('query')
+    return sql.search_movies(sqlconn, query)
+
+@app.route('/getmovies', methods=['GET'])
+def getmovies():
+    return sql.getmovies(sqlconn)
+
 @app.route('/insertbookreviews')
 def insertbookreviews():
     return bookreview.init(sqlconn)
