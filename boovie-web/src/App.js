@@ -31,7 +31,16 @@ function App() {
   return (
     <div className="App">
       <div>
+<<<<<<< HEAD
         <Navbar handleLogin={loggedIn} isLoggedIn={isLoggedIn} userRole={userRole} handleLogout={logout}/>
+=======
+        {/* <Navbar handleLogin={loggedIn} isLoggedIn={isLoggedIn} handleLogout={logout}/> */}
+        {/* <Switch>
+          <Route exact path="/search" component={SearchPage} />
+        </Switch> */}
+        <SearchPage />
+        {/* <Main isLoggedIn={isLoggedIn} handleLogout={logout}/> */}
+>>>>>>> 5b611b2 (search)
       </div>
     </div>
   )
