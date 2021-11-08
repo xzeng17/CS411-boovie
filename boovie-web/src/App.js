@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import './App.css';
+<<<<<<< HEAD
 import Navbar from './components/Navbar';
+=======
+import { Switch, Route } from "react-router-dom";
+import Login from './components/Login';
+import Navbar from './components/Navbar';
+import Main from './components/Main';
+import SearchPage from './components/Search';
+>>>>>>> 5b611b2 (search)
 
 
 function App() {

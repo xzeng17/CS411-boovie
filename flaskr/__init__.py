@@ -22,6 +22,7 @@ sqlconn = sql.connect_MySQL(app)
 def hello():
     return 'Hello, SauerkrautFishes!'
 
+#  
 
 @app.route('/team')
 def team():
@@ -153,6 +154,15 @@ def top_users():
 @app.route('/insertbooks')
 def insertbooks():
     return bookdata.init(sqlconn)
+
+@app.route('/searchbooks', methods=['GET', 'POST'])
+def searchbooks():
+    query = request.args.get('query')
+    return sql.search_movies(sqlconn, query)
+
+@app.route('/getmovies', methods=['GET'])
+def getmovies():
+    return sql.getmovies(sqlconn)
 
 @app.route('/insertbookreviews')
 def insertbookreviews():
