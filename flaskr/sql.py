@@ -1,7 +1,7 @@
 import json
 from flask import Response
 from flaskext.mysql import MySQL
-
+import json
 import os
 
 
@@ -64,7 +64,25 @@ def get_user_by_email(conn, input_email: str)->list:
         json_data.append(dict(zip(row_headers,result)))
     print(json_data)
     return json_data
-        
+
+def search_movies(conn, query: str):
+    json_data=[]
+    reconnect(conn)
+    cursor = conn.cursor()
+    query = "\"%" + query + "%\""
+    cursor.execute("SELECT title, image_url from movie WHERE title LIKE " + query)
+    row_headers=[x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    for result in data:
+        as_list = list(result)
+        as_list[1] = "https://image.tmdb.org/t/p/w500/" + as_list[1]
+        json_data.append(dict(zip(row_headers,as_list)))
+    cursor.execute("SELECT title, image_url from Book WHERE title LIKE " + query)
+    conn.commit()
+    data = cursor.fetchall()
+    for result in data:
+        json_data.append(dict(zip(row_headers,result)))
+    return json.dumps(json_data, default=str)
 
 def insert_string_values(conn, table_name: str, values: list):
     # values is a list of string where each string will be enclosed by ''
@@ -93,7 +111,6 @@ def insert_values(conn, table_name:str, values:list)->None:
 
     cursor.execute(stmt%(", ").join(values))
     conn.commit()
-
 
 def delete_row(conn, table_name: str, values):
     cursor = conn.cursor()

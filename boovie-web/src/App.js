@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import './App.css';
+import { Switch, Route } from "react-router-dom";
+import Login from './components/Login';
 import Navbar from './components/Navbar';
+import Main from './components/Main';
 
 
 function App() {

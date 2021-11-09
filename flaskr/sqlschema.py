@@ -22,6 +22,8 @@ def run(conn):
 
         stmt = "DROP TABLE IF EXISTS User;"
         cursor.execute(stmt)
+        stmt = "SET NAMES 'utf8mb4';"
+        cursor.execute(stmt)
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
 
@@ -95,15 +97,16 @@ def run(conn):
     try:
         # Begin create table Book
         stmt = "CREATE TABLE Book (\
-                    isbn		    INT PRIMARY KEY NOT NULL,\
-                    title 			VARCHAR(50) NOT NULL,\
-                    author  		VARCHAR(50) NOT NULL,\
+                    id              VARCHAR(50) PRIMARY KEY NOT NULL,\
+                    isbn		    VARCHAR(50),\
+                    title 			TEXT NOT NULL,\
+                    author  		TEXT NOT NULL,\
                     language		VARCHAR(50) NOT NULL,\
                     image_url		TEXT        NOT NULL,\
-                    published_date	DATE        NOT NULL,\
+                    published_date	VARCHAR(50) NOT NULL,\
                     page_count		INT,\
                     description		TEXT,\
-                    publisher		VARCHAR(50)\
+                    publisher		TEXT\
                 );"
 
         cursor.execute(stmt)
@@ -114,14 +117,13 @@ def run(conn):
     try:
         # Begin create table BookReview
         stmt = "CREATE TABLE BookReview (\
-                    book_review_id	INT	PRIMARY KEY,\
+                    book_review_id	VARCHAR(100)	PRIMARY KEY,\
                     content		TEXT	NOT NULL,\
-                    isbn 			INT,\
-                    user_email		VARCHAR(50),\
-                    FOREIGN KEY (isbn) REFERENCES Book(isbn) ON DELETE CASCADE,\
-                    FOREIGN KEY (user_email) REFERENCES User(user_email) ON DELETE CASCADE\
+                    id 			VARCHAR(50),\
+                    user_email		VARCHAR(50)\
                 );"
-                
+        # FOREIGN KEY (id) REFERENCES Book(id) ON DELETE CASCADE,\
+        # FOREIGN KEY (user_email) REFERENCES User(user_email) ON DELETE CASCADE\
         cursor.execute(stmt)
     # End create table BookReview
     except Exception as e:
@@ -131,10 +133,10 @@ def run(conn):
         # Begin create table BookHistory
         stmt = "CREATE TABLE BookHistory (\
                     user_email		VARCHAR(50) NOT NULL,\
-                    book_id 		INT NOT NULL,\
+                    book_id 		VARCHAR(50) NOT NULL,\
                     PRIMARY KEY (user_email, book_id ),\
                     FOREIGN KEY (user_email) REFERENCES User(user_email) ON DELETE CASCADE,\
-                    FOREIGN KEY (book_id ) REFERENCES Book(isbn) ON DELETE CASCADE \
+                    FOREIGN KEY (book_id ) REFERENCES Book(id) ON DELETE CASCADE \
                 );"
                 
         cursor.execute(stmt)
