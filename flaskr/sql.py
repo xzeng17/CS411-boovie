@@ -71,7 +71,6 @@ def search_books(conn, query: str):
     cursor = conn.cursor()
     query = "\"%" + query + "%\""
     cursor.execute("SELECT title, image_url from Book WHERE title LIKE " + query)
-    cursor.execute("SELECT * from Book WHERE title LIKE " + query)
     row_headers=[x[0] for x in cursor.description]
     conn.commit()
     data = cursor.fetchall()
