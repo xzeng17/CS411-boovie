@@ -8,6 +8,7 @@ export default function Card(props) {
       <figure className="image is-48x48">
         <img
 <<<<<<< HEAD
+<<<<<<< HEAD
           src={movie.image_url}
         />
       </figure>
@@ -20,6 +21,13 @@ export default function Card(props) {
       <h4 class="bolder">{movie.title}</h4>
       <span><b>Year:</b>{movie.published_date}</span>
 >>>>>>> 5b611b2 (search)
+=======
+          src={movie.image_url}
+        />
+      </figure>
+      <h4 class="bolder">{movie.title}</h4>
+      {/* <span><b>Year:</b>{movie.published_date}</span> */}
+>>>>>>> b8f4ed3 (added search:)
     </div>
   );
 }
