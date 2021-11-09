@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import BookSource from "./BookSource";
 import CardList from "./CardList";
 import SearchBar from "./SearchBar";
+import LadderBoard from "./LadderBoard";
+
+
 function Search(props) {
     const [state, setState] = useState({
         results: []
@@ -26,6 +29,7 @@ function Search(props) {
                 <SearchBar onSearch={onSearch} />
                 <CardList results={state.results} /> 
             </div>
+            <LadderBoard/>
         </div>
     )
 }
