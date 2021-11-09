@@ -72,10 +72,13 @@ def init(conn):
                     authors = 'N/A'
                     publishedDate = 'N/A'
                     title = 'N/A'
-                    imgLink = 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fstatic.scientificamerican.com%2Fsciam%2Fcache%2Ffile%2F1DDFE633-2B85-468D-B28D05ADAE7D1AD8_source.jpg%3Fw%3D590%26h%3D800%26D80F3D79-4382-49FA-BE4B4D0C62A5C3ED&imgrefurl=https%3A%2F%2Fwww.scientificamerican.com%2Fpodcast%2Fepisode%2Funread-books-at-home-still-spark-literacy-habits%2F&tbnid=79SOCMHf7w5ODM&vet=12ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ..i&docid=DUTn4ZoS2heroM&w=590&h=431&itg=1&q=book&ved=2ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ'
+                    imgLink = 'https://5b0988e595225.cdn.sohucs.com/images/20200104/a8327f8ae16e495e9dc0df75f3b88837.png'
+                    # 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fstatic.scientificamerican.com%2Fsciam%2Fcache%2Ffile%2F1DDFE633-2B85-468D-B28D05ADAE7D1AD8_source.jpg%3Fw%3D590%26h%3D800%26D80F3D79-4382-49FA-BE4B4D0C62A5C3ED&imgrefurl=https%3A%2F%2Fwww.scientificamerican.com%2Fpodcast%2Fepisode%2Funread-books-at-home-still-spark-literacy-habits%2F&tbnid=79SOCMHf7w5ODM&vet=12ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ..i&docid=DUTn4ZoS2heroM&w=590&h=431&itg=1&q=book&ved=2ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ'
                     if 'imgLinks' in book['volumeInfo']:
                         if 'thumbnail' in book['volumeInfo']['imageLinks']:
                             imgLink = book['volumeInfo']['imageLinks']['thumbnail']
+                        elif 'smallThumbnail' in book['volumeInfo']['imageLinks']:
+                            imgLink = book['volumeInfo']['imageLinks']['smallThumbnail']
                     if 'pageCount' in book['volumeInfo']:
                         pageCount = book['volumeInfo']['pageCount']
                     if 'authors' in book['volumeInfo']:
@@ -121,10 +124,13 @@ def init(conn):
                     authors = 'N/A'
                     publishedDate = 'N/A'
                     title = 'N/A'
-                    imgLink = 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fstatic.scientificamerican.com%2Fsciam%2Fcache%2Ffile%2F1DDFE633-2B85-468D-B28D05ADAE7D1AD8_source.jpg%3Fw%3D590%26h%3D800%26D80F3D79-4382-49FA-BE4B4D0C62A5C3ED&imgrefurl=https%3A%2F%2Fwww.scientificamerican.com%2Fpodcast%2Fepisode%2Funread-books-at-home-still-spark-literacy-habits%2F&tbnid=79SOCMHf7w5ODM&vet=12ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ..i&docid=DUTn4ZoS2heroM&w=590&h=431&itg=1&q=book&ved=2ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ'
+                    imgLink = 'https://5b0988e595225.cdn.sohucs.com/images/20200104/a8327f8ae16e495e9dc0df75f3b88837.png'
+                    # 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fstatic.scientificamerican.com%2Fsciam%2Fcache%2Ffile%2F1DDFE633-2B85-468D-B28D05ADAE7D1AD8_source.jpg%3Fw%3D590%26h%3D800%26D80F3D79-4382-49FA-BE4B4D0C62A5C3ED&imgrefurl=https%3A%2F%2Fwww.scientificamerican.com%2Fpodcast%2Fepisode%2Funread-books-at-home-still-spark-literacy-habits%2F&tbnid=79SOCMHf7w5ODM&vet=12ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ..i&docid=DUTn4ZoS2heroM&w=590&h=431&itg=1&q=book&ved=2ahUKEwjT5aeB_cfzAhVVBM0KHePdCBoQMygBegUIARDQAQ'
                     if 'imgLinks' in book['volumeInfo']:
                         if 'thumbnail' in book['volumeInfo']['imageLinks']:
                             imgLink = book['volumeInfo']['imageLinks']['thumbnail']
+                        elif 'smallThumbnail' in book['volumeInfo']['imageLinks']:
+                            imgLink = book['volumeInfo']['imageLinks']['smallThumbnail']
                     if 'pageCount' in book['volumeInfo']:
                         pageCount = book['volumeInfo']['pageCount']
                     if 'authors' in book['volumeInfo']:

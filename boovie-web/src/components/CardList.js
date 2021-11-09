@@ -4,9 +4,9 @@ import Card from "./Card";
 function CardList({ results }) {
   let data = [];
   if (results.data) {
-    data = results.data;
+    data = results.data || [];
   }
-  // console.log(data);
+  console.log(data);
   return (
     <div className="result">
       {data.map((item) => (

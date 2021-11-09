@@ -151,15 +151,8 @@ def top_users():
         }
     return Response(json.dumps(data, indent=4, sort_keys=True, default=str), status=200, mimetype='application/json')
 @app.route('/insertbooks')
-
-@app.route('/searchbooks', methods=['GET', 'POST'])
-def searchbooks():
-    query = request.args.get('query')
-    return sql.search_movies(sqlconn, query)
-
-@app.route('/getmovies', methods=['GET'])
-def getmovies():
-    return sql.getmovies(sqlconn)
+def insertbooks():
+    return bookdata.init(sqlconn)
 
 @app.route('/searchbooks', methods=['GET', 'POST'])
 def searchbooks():
