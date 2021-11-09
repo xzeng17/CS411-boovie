@@ -70,7 +70,7 @@ def search_books(conn, query: str):
     reconnect(conn)
     cursor = conn.cursor()
     query = "\"%" + query + "%\""
-    cursor.execute("SELECT * from Book WHERE title LIKE " + query)
+    cursor.execute("SELECT title, image_url from Book WHERE title LIKE " + query)
     row_headers=[x[0] for x in cursor.description]
     conn.commit()
     data = cursor.fetchall()
@@ -83,12 +83,22 @@ def search_movies(conn, query: str):
     reconnect(conn)
     cursor = conn.cursor()
     query = "\"%" + query + "%\""
-    cursor.execute("SELECT * from movie WHERE title LIKE " + query)
+    cursor.execute("SELECT title, image_url from movie WHERE title LIKE " + query)
     row_headers=[x[0] for x in cursor.description]
-    conn.commit()
+    # conn.commit()
     data = cursor.fetchall()
     for result in data:
+        as_list = list(result)
+        as_list[1] = "https://image.tmdb.org/t/p/w500/" + as_list[1]
+        json_data.append(dict(zip(row_headers,as_list)))
+    cursor.execute("SELECT title, image_url from Book WHERE title LIKE " + query)
+    conn.commit()
+    data = cursor.fetchall()
+    # book_img=[]
+    for result in data:
+        # book_img.append(result[1])
         json_data.append(dict(zip(row_headers,result)))
+    # return str(book_img)
     return json.dumps(json_data, default=str)
 
 def insert_string_values(conn, table_name: str, values: list):

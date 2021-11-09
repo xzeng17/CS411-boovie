@@ -7,11 +7,11 @@ export default function Card(props) {
     <div class="resultCard">
       <figure className="image is-48x48">
         <img
-          src={"https://image.tmdb.org/t/p/w500/" + movie.image_url}
+          src={movie.image_url}
         />
       </figure>
       <h4 class="bolder">{movie.title}</h4>
-      <span><b>Year:</b>{movie.published_date}</span>
+      {/* <span><b>Year:</b>{movie.published_date}</span> */}
     </div>
   );
 }
