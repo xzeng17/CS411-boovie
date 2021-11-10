@@ -206,6 +206,31 @@ def movieHistory():
             return Response("Success", status=200, mimetype='application/json')
     return Response({"Bad request."}, status=400, mimetype='application/json')
 
+
+@app.route('/passwordchange', methods=['POST'])
+def change_password():
+    # authenticate user
+    token = ""
+    try:
+        token = request.headers["Authorization"][7:]
+    except Exception as e:
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+    if not auth.auth_login(sqlconn, token):
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+    # end of authentication
+    print("token authenticated")
+    if request.method == 'POST':
+        user_info = auth.decode_token(token)
+        user_email = user_info["user_email"]
+        data_json = json.loads(request.data)
+        old_password = auth.md5_encode(data_json["old_password"])
+        if old_password == user_info["user_password"]:
+            new_password = data_json["new_password"]
+            auth.update_password(sqlconn, user_email, new_password)
+            return Response("Success", status=200, mimetype='application/json')
+    return Response({"Not authorized."}, status=401, mimetype='application/json')
+
 # @app.route('/insertbookreviews')
 # def insertbookreviews():
 #     return bookreview.init(sqlconn)
