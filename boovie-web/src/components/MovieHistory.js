@@ -16,6 +16,7 @@ class MovieHistory extends React.Component {
         toMovieItem: false
     }
 
+    //comment
     handleRedirect = (id) => {
         console.log("SDA");
             this.props.setId(id);
