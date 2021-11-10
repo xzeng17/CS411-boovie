@@ -33,8 +33,8 @@ function Navbar(props) {
             <div id="Top-bar">
                 <h1 className="App-title">Boovie</h1>
                 <ul className="Top-bar-manu">
-                    <Link className="Top-bar-button" to="/Search">Search</Link> 
                     <Link className="Top-bar-button" to="/UserProfile">UserProfile</Link>
+                    <Link className="Top-bar-button" to="/Search">Search</Link>
                     <Link className="Top-bar-button" to="/BookHistory">BookHistory</Link>
                     <Link className="Top-bar-button" to="/MovieHistory">MovieHistory</Link>
                     {isLoggedIn
@@ -44,13 +44,13 @@ function Navbar(props) {
             </div>
             <Switch>
                 <Route path="/UserProfile">
-                    <UserProfile isLoggedIn={isLoggedIn} userRole={userRole} handleLogout = {handleLogout}/>
+                    <UserProfile isLoggedIn={isLoggedIn} userRole={userRole}/>
                 </Route>
                 <Route path="/Search">
-                    <Search setId={setId}/>
+                    <Search />
                 </Route>
                 <Route path="/BookHistory">
-                    <BookHistory isLoggedIn={isLoggedIn}/>
+                    <BookHistory />
                 </Route>
                 <Route path="/MovieHistory">
                     <MovieHistory isLoggedIn={isLoggedIn} userRole={userRole} setId={setId}/>

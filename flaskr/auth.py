@@ -82,18 +82,6 @@ def auth_login(conn, token)->bool:
     return True
 
 
-def update_password(conn, user_email, new_password)->bool:
-    sql.reconnect(conn)
-    cursor = conn.cursor()
-    stmt = "UPDATE USER\
-            SET user_password = '{0}'\
-            WHERE user_email='{1}';".format(md5_encode(new_password), user_email)
-    cursor.execute(stmt)
-    conn.commit()
-    sql.close(conn)
-    return True
-
-
 def md5_encode(password:str)->str:
     result = hashlib.md5(password.encode())
     return result.hexdigest()
