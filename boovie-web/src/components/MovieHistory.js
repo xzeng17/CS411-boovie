@@ -13,7 +13,8 @@ class MovieHistory extends React.Component {
         movies: [],
         isLoggedIn: this.props.isLoggedIn,
         userRole: this.props.userRole,
-        toMovieItem: false
+        toMovieItem: false,
+        deleteItem: false
     }
 
     handleRedirect = (id) => {
@@ -26,6 +27,8 @@ class MovieHistory extends React.Component {
     deleteItem = (id) => {
         this.props.setId(id);
         console.log(id)
+
+        this.setState(() => ({ deleteItem: true }));
 
         console.log(LOCALHOST_URL+"deletemoviereview");
         
@@ -97,6 +100,11 @@ class MovieHistory extends React.Component {
             return <Redirect to='/MovieItem' />
         }
 
+        // if (this.state.deleteItem) {
+        //     this.fetchHistory()
+        //     this.setState(() => ({ deleteItem: false }));
+        // }
+
 
 
         return (
@@ -122,6 +130,11 @@ class MovieHistory extends React.Component {
                             <td>{movie.description}</td>
                             <td onClick={()=>{
                                     this.deleteItem(movie.movie_id);
+                                    // this.setState(() => ({ 
+                                    //     movies:movies.filter(function(value, index, arr){ 
+                                    //     return value != movie.movie_id;
+                                    // })}))
+                                    // this.fetchHistory();
                                 }
                             }>&#10006;</td>
                         </tr>
