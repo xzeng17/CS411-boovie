@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Card(props) {
   const { movie } = props;
-  // console.log(movie.image_url);
+   console.log(movie.image_url);
   return (
     <div className="resultCard">
       <figure className="image is-48x48">
