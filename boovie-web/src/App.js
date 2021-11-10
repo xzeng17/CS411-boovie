@@ -20,8 +20,10 @@ function App() {
  
   const loggedIn = (response) => {
     if (response["TOKEN"]) {
+      console.log("response");
       localStorage.setItem("TOKEN_KEY", response["TOKEN"]);
       localStorage.setItem("ROLE", response["ROLE"]);
+      localStorage.setItem("USEREMAIL", response["User_email"]);
       setIsLoggedIn(true);
       setRole(response["ROLE"]);
     }

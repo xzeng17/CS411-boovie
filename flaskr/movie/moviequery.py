@@ -77,3 +77,48 @@ def find_KV_pairs_with_stmt(conn, stmt)->list:#list of dict
         print(str(e.args))
     sql.close(conn)
     return list_of_dict
+
+
+def has_movie(conn, user_email, movie_id)->bool:
+    print("has movie called")
+    conn.ping()
+    list_of_dict=[]
+    try:
+        cursor = conn.cursor()
+        stmt = "SELECT * FROM MovieHistory WHERE user_email = '{0}' AND movie_id = '{1}'".format(user_email, movie_id)
+        cursor.execute(stmt)
+        row_headers=[x[0] for x in cursor.description]
+        data = cursor.fetchall()
+        for result in data:
+            list_of_dict.append(dict(zip(row_headers,result)))
+    except Exception as e:
+        print(str(e.args))
+    sql.close(conn)
+    return not not list_of_dict
+
+
+def add_movie(conn, user_email, movie_id)->bool:
+    print("Add called")
+    conn.ping()
+    try:
+        sql.insert_values(conn, "MovieHistory", [user_email, movie_id])
+    except Exception as e:
+        print(str(e.args))
+        return False
+    sql.close(conn)
+    return True
+
+
+def delete_movie(conn, user_email, movie_id)->bool:
+    print("Delete called")
+    conn.ping()
+    try:
+        cursor = conn.cursor()
+        stmt = "DELETE FROM MovieHistory WHERE user_email = '{0}' AND movie_id = '{1}'".format(user_email, movie_id)
+        cursor.execute(stmt)
+        conn.commit()
+    except Exception as e:
+        print(str(e.args))
+        return False
+    sql.close(conn)
+    return True

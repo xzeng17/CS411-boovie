@@ -80,9 +80,9 @@ def sqlschema():
 
 
 # only perform once, comment out before deploy  
-@app.route('/initmovie')
-def initmovie():
-    return moviedata.init(sqlconn)
+# @app.route('/initmovie')
+# def initmovie():
+#     return moviedata.init(sqlconn)
 
 
 # test function only
@@ -150,14 +150,24 @@ def top_users():
         "top_3_rating_recent": moviequery.top_3_user_watching_recent_3point_movie(sqlconn)
         }
     return Response(json.dumps(data, indent=4, sort_keys=True, default=str), status=200, mimetype='application/json')
-@app.route('/insertbooks')
-def insertbooks():
-    return bookdata.init(sqlconn)
+
+
+# @app.route('/insertbooks')
+# def insertbooks():
+#     return bookdata.init(sqlconn)
+
+@app.route('/import')
+def import_data():
+    bookdata.init(sqlconn)
+    bookreview.init(sqlconn)
+    return moviedata.init(sqlconn)
+
 
 @app.route('/searchbooks', methods=['GET', 'POST'])
 def searchbooks():
     query = request.args.get('query')
     return sql.search_movies(sqlconn, query)
+
 
 @app.route('/getmovies', methods=['GET'])
 def getmovies():
