@@ -80,9 +80,9 @@ def sqlschema():
 
 
 # only perform once, comment out before deploy  
-@app.route('/initmovie')
-def initmovie():
-    return moviedata.init(sqlconn)
+# @app.route('/initmovie')
+# def initmovie():
+#     return moviedata.init(sqlconn)
 
 
 # test function only
@@ -152,9 +152,15 @@ def top_users():
     return Response(json.dumps(data, indent=4, sort_keys=True, default=str), status=200, mimetype='application/json')
 
 
-@app.route('/insertbooks')
-def insertbooks():
-    return bookdata.init(sqlconn)
+# @app.route('/insertbooks')
+# def insertbooks():
+#     return bookdata.init(sqlconn)
+
+@app.route('/import')
+def import_data():
+    bookdata.init(sqlconn)
+    bookreview.init(sqlconn)
+    return moviedata.init(sqlconn)
 
 
 @app.route('/searchbooks', methods=['GET', 'POST'])
@@ -168,6 +174,38 @@ def getmovies():
     return sql.getmovies(sqlconn)
 
 
-@app.route('/insertbookreviews')
-def insertbookreviews():
-    return bookreview.init(sqlconn)
+@app.route('/movie/changeHistory', methods=['GET', 'POST', 'DELETE'])
+def movieHistory():
+    # authenticate user
+    token = ""
+    try:
+        token = request.headers["Authorization"][7:]
+    except Exception as e:
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+    if not auth.auth_login(sqlconn, token):
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+    # end of authentication
+    
+    user_info = auth.decode_token(token)
+    user_email = user_info["user_email"]
+
+    if request.method == 'GET':
+        movie_id = request.args.get('movie_id')
+        if moviequery.has_movie(sqlconn, user_email, movie_id):
+            return Response("Success", status=200, mimetype='application/json')
+
+    if request.method == 'POST':
+        data_json = json.loads(request.data)
+        if moviequery.add_movie(sqlconn, user_email, data_json['movie_id']):
+            return Response("Success", status=200, mimetype='application/json')
+
+    if request.method == 'DELETE':
+        data_json = json.loads(request.data)
+        if moviequery.delete_movie(sqlconn, user_email, data_json['movie_id']):
+            return Response("Success", status=200, mimetype='application/json')
+    return Response({"Bad request."}, status=400, mimetype='application/json')
+
+# @app.route('/insertbookreviews')
+# def insertbookreviews():
+#     return bookreview.init(sqlconn)

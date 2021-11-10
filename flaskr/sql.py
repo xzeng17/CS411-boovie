@@ -70,15 +70,16 @@ def search_movies(conn, query: str):
     reconnect(conn)
     cursor = conn.cursor()
     query = "\"%" + query + "%\""
-    cursor.execute("SELECT title, image_url from movie WHERE title LIKE " + query)
+    cursor.execute("SELECT title, image_url, movie_id from movie WHERE title LIKE " + query)
     row_headers=[x[0] for x in cursor.description]
     data = cursor.fetchall()
     for result in data:
         as_list = list(result)
         as_list[1] = "https://image.tmdb.org/t/p/w500/" + as_list[1]
         json_data.append(dict(zip(row_headers,as_list)))
-    cursor.execute("SELECT title, image_url from Book WHERE title LIKE " + query)
+    cursor.execute("SELECT title, image_url, isbn from Book WHERE title LIKE " + query)
     conn.commit()
+    row_headers=[x[0] for x in cursor.description]
     data = cursor.fetchall()
     for result in data:
         json_data.append(dict(zip(row_headers,result)))
