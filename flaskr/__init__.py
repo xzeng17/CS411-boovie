@@ -231,6 +231,28 @@ def change_password():
             return Response("Success", status=200, mimetype='application/json')
     return Response({"Not authorized."}, status=401, mimetype='application/json')
 
+@app.route('/deletemoviereview', methods=['POST', 'GET'])
+def deletemoviereview():
+
+    data_json = json.loads(request.data)
+    movie_id = data_json.get('movie_id')
+    print(movie_id)
+    token = ""
+    try:
+        token = request.headers["Authorization"][7:]
+        print(token)
+    except Exception as e:
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+    if not auth.auth_login(sqlconn, token):
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+    user_info = auth.decode_token(token)
+    user_email = user_info["user_email"]
+
+    #print(user_email)
+    sql.delete_row(sqlconn, movie_id, user_email)
+    return "Worked"
 # @app.route('/insertbookreviews')
 # def insertbookreviews():
 #     return bookreview.init(sqlconn)

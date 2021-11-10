@@ -113,9 +113,17 @@ def insert_values(conn, table_name:str, values:list)->None:
     cursor.execute(stmt%(", ").join(values))
     conn.commit()
 
-def delete_row(conn, table_name: str, values):
+
+def delete_row(conn, movie_id: str, input_email: str):
+    reconnect(conn)
     cursor = conn.cursor()
-    # need implementation
+    #stmt = "INSERT INTO USER VALUES('rohanrodrigues55@gmail.com', '12312312', 'user');"
+    #stmt = "INSERT INTO USER VALUES('{email}', '{movie_id}', 'user');".format(email=input_email, movie_id=movie_id)
+
+    stmt = "DELETE FROM MovieHistory WHERE user_email = '{email}' and movie_id = {movie_id};".format(email=input_email, movie_id=movie_id)
+    #stmt = "DELETE FROM MovieHistory WHERE user_email = 'xukuncai@gmail.com' and movie_id = 11;".format(email=input_email, movie_id=movie_id)
+    cursor.execute(stmt)
+    conn.commit()
 
 
 def count_number_of_rows(conn, table_name: str):

@@ -51,6 +51,38 @@ class MovieHistory extends React.Component {
         });
     }
 
+    deleteItem = (id) => {
+        this.props.setId(id);
+        console.log(id)
+
+        this.setState(() => ({ deleteItem: true }));
+
+        console.log(LOCALHOST_URL+"deletemoviereview");
+
+        const opt = {
+            method: "POST",
+            url: LOCALHOST_URL+"deletemoviereview",
+            data: {
+                movie_id: id
+            },
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("TOKEN_KEY"),
+                "Content-Type": "application/json"
+            }
+        };
+
+        Axios(opt)
+        .then((res) => {
+            if (res.status === 200) {
+                console.log("Worked")
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            console.log("fail to work")
+        });
+    }
+
     render() {
         if (!this.props.isLoggedIn) {
             return <Redirect to='/Login' />
@@ -75,7 +107,7 @@ class MovieHistory extends React.Component {
                         <th>Description</th>
                     </tr>
                 </thead>
-                <tbody>
+                {/* <tbody>
                     {movies && movies.map(movie =>
                         <tr id="movie-item" key={movie.movie_id} onClick= {()=>this.handleRedirect(movie.movie_id)} >
                             <td><img src={MOVIE_IMG_BASE+movie.image_url} alt="Img N/A"/></td>
@@ -83,6 +115,27 @@ class MovieHistory extends React.Component {
                             <td>{movie.language}</td>
                             <td>{movie.rating}</td>
                             <td>{movie.description}</td>
+                        </tr>
+                    )}
+                </tbody>*/}
+
+                <tbody>
+                    {movies && movies.map(movie =>
+                        <tr id="movie-item" key={movie.movie_id} >
+                            <td><img src={MOVIE_IMG_BASE+movie.image_url} alt="Img N/A" onClick= {()=>this.handleRedirect(movie.movie_id)}/></td>
+                            <td>{movie.title}</td>
+                            <td>{movie.language}</td>
+                            <td>{movie.rating}</td>
+                            <td>{movie.description}</td>
+                            <td onClick={()=>{
+                                    this.deleteItem(movie.movie_id);
+                                    // this.setState(() => ({ 
+                                    //     movies:movies.filter(function(value, index, arr){ 
+                                    //     return value != movie.movie_id;
+                                    // })}))
+                                    // this.fetchHistory();
+                                }
+                            }>&#10006;</td>
                         </tr>
                     )}
                 </tbody>
