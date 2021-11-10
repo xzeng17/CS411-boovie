@@ -26,7 +26,6 @@ class MovieHistory extends React.Component {
     deleteItem = (id) => {
         this.props.setId(id);
         console.log(id)
-        //this.setState(() => ({ deleteItem: true}));
 
         console.log(LOCALHOST_URL+"deletemoviereview");
         
@@ -34,12 +33,11 @@ class MovieHistory extends React.Component {
             method: "POST",
             url: LOCALHOST_URL+"deletemoviereview",
             data: {
-                movie_id: 5
+                movie_id: id
             },
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("TOKEN_KEY"),
                 "Content-Type": "application/json"
-                // "Access-Control-Allow-Origin":  "http://127.0.0.1:3000"
             }
         };
 
@@ -47,8 +45,6 @@ class MovieHistory extends React.Component {
         .then((res) => {
             if (res.status === 200) {
                 console.log("Worked")
-                // console.log(res.data);
-                // console.log(this.state.movies);
             }
         })
         .catch((err) => {
@@ -56,21 +52,7 @@ class MovieHistory extends React.Component {
             console.log("fail to work")
         });
 
-        //this.render()
 
-
-
-        // const headers = { 
-        //     'Authorization': 'Bearer my-token',
-        //     'movieid': "as"
-        // };
-        
-        // const params = new URLSearchParams();
-        // params.append('event_id', "12");
-        // params.append('item_id', "34");
-        // params.append('description', "56");
-        // axios.post(LOCALHOST_URL+"deletemoviereview", params)
-        // .then(() => console.log('Delete successful'));
     }
 
     componentDidMount = () => {
@@ -111,11 +93,6 @@ class MovieHistory extends React.Component {
 
         const movies = this.state.movies;
 
-        // if (this.props.deleteItem) {
-        //     console.log("ASD")
-        //     return <Redirect to='/UserProfile' />
-        // }
-
         if (this.state.toMovieItem) {
             return <Redirect to='/MovieItem' />
         }
@@ -143,7 +120,10 @@ class MovieHistory extends React.Component {
                             <td>{movie.language}</td>
                             <td>{movie.rating}</td>
                             <td>{movie.description}</td>
-                            <td onClick={()=>this.deleteItem(movie.movie_id)}>&#10006;</td>
+                            <td onClick={()=>{
+                                    this.deleteItem(movie.movie_id);
+                                }
+                            }>&#10006;</td>
                         </tr>
                     )}
                 </tbody>

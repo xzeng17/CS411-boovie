@@ -167,45 +167,27 @@ def getmovies():
 def insertbookreviews():
     return bookreview.init(sqlconn)
 
-@app.route('/deletemoviereview', methods=['POST'])
+@app.route('/deletemoviereview', methods=['POST', 'GET'])
 def deletemoviereview():
-    # query = request.args.get('query')
-    # if request.method == 'POST':
-    #     return query or "POST"
-    # else:
-    #     return query or "NOT"
 
-    print("test")
     data_json = json.loads(request.data)
-    print(data_json)
-    return json.dumps(data_json, default=str)
+    movie_id = data_json.get('movie_id')
+    print(movie_id)
 
+    token = ""
+    try:
+        token = request.headers["Authorization"][7:]
+        print(token)
+    except Exception as e:
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
 
-    # data = request.get_json(silent=True)
-    # item = {'label': data.get('movie_id')}
-    # item = request.json["method"]
-    # return item or "ASDS"
-
-    # print(movie_id)
-    sql.delete_row(sqlconn, '11', 'gastyny@gmail.com')
-    return "Worked"
-
-
-    # token = ""
-    # try:
-    #     token = request.headers["Authorization"][7:]
-    # except Exception as e:
-    #     return Response({"Not authorized."}, status=401, mimetype='application/json')
-
-    # if not auth.auth_login(sqlconn, token):
-    #     return Response({"Not authorized."}, status=401, mimetype='application/json')
+    if not auth.auth_login(sqlconn, token):
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
     
-    # user_info = auth.decode_token(token)
-    # return user_info["user_email"]
+    user_info = auth.decode_token(token)
+    user_email = user_info["user_email"]
 
-
-    #return sql.delete_row(sqlconn, query)
-
-    # data = json.dumps(moviequery.get_movie_details(sqlconn, request.args.get('movie_id')), indent=4, sort_keys=True, default=str)
-    #print("data: ", data)
+    #print(user_email)
+    sql.delete_row(sqlconn, movie_id, user_email)
+    return "Worked"
 

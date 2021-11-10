@@ -117,7 +117,9 @@ def delete_row(conn, movie_id: str, input_email: str):
     cursor = conn.cursor()
     #stmt = "INSERT INTO USER VALUES('rohanrodrigues55@gmail.com', '12312312', 'user');"
     #stmt = "INSERT INTO USER VALUES('{email}', '{movie_id}', 'user');".format(email=input_email, movie_id=movie_id)
-    stmt = "DELETE FROM MovieHistory WHERE user_email = '{email}' and movie_id = '{movie_id}';".format(email=input_email, movie_id=movie_id)
+   
+    stmt = "DELETE FROM MovieHistory WHERE user_email = '{email}' and movie_id = {movie_id};".format(email=input_email, movie_id=movie_id)
+    #stmt = "DELETE FROM MovieHistory WHERE user_email = 'xukuncai@gmail.com' and movie_id = 11;".format(email=input_email, movie_id=movie_id)
     cursor.execute(stmt)
     conn.commit()
 
