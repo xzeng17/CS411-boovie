@@ -167,8 +167,8 @@ def getmovies():
 def insertbookreviews():
     return bookreview.init(sqlconn)
 
-@app.route('/deletemoviereview')
-def deletemoviereview(methods=['POST']):
+@app.route('/deletemoviereview', methods=['POST'])
+def deletemoviereview():
     # query = request.args.get('query')
     # if request.method == 'POST':
     #     return query or "POST"
