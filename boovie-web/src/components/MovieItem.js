@@ -5,8 +5,7 @@ import { Redirect } from 'react-router-dom'
 
 class MovieItem extends React.Component {
     state = {
-        movieInfo: {title: "place_holder"},
-        added: true
+        movieInfo: {title: "place_holder"}
     }
     
     componentDidMount = () => {
@@ -29,93 +28,11 @@ class MovieItem extends React.Component {
             
             if (res.status === 200) {
                 this.setState({movieInfo: res.data})
-                this.getHistory();
             }
         })
         .catch((err) => {
             console.log(err)
             console.log("fail to fetch movie history")
-        });
-    }
-
-    getHistory = () => {
-        const opt = {
-            method: "GET",
-            url: LOCALHOST_URL+"movie/changeHistory?movie_id="+this.props.movie_id,
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("TOKEN_KEY"),
-                "Content-Type": "application/json"
-            }
-          };
-       
-        Axios(opt)
-        .then((res) => {
-            if (res.status === 200) {
-                // res.data is token returned from server
-                console.log(res.data);
-                this.setState({added: true});
-            } else {
-                this.setState({added: false});
-            }
-        })
-        .catch((err) => {
-            console.log("Login failed: ", err.message);
-            this.setState({added: false});
-        });
-    }
-
-
-    addToHistory = () => {
-        const opt = {
-            method: "POST",
-            url: LOCALHOST_URL+"movie/changeHistory",
-            data: {
-                movie_id: this.props.movie_id
-            },
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("TOKEN_KEY"),
-                "Content-Type": "application/json"
-            }
-          };
-       
-        Axios(opt)
-        .then((res) => {
-            if (res.status === 200) {
-                // res.data is token returned from server
-                console.log(res.data);
-                this.setState({added: true})
-            }
-        })
-        .catch((err) => {
-            console.log("Login failed: ", err.message);
-
-        });
-    }
-
-    removeFromHistory = () => {
-        const opt = {
-            method: "DELETE",
-            url: LOCALHOST_URL+"movie/changeHistory",
-            data: {
-                movie_id: this.props.movie_id
-            },
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("TOKEN_KEY"),
-                "Content-Type": "application/json"
-            }
-          };
-       
-        Axios(opt)
-        .then((res) => {
-            if (res.status === 200) {
-                // res.data is token returned from server
-                console.log(res.data);
-                this.setState({added: false})
-            }
-        })
-        .catch((err) => {
-            console.log("Login failed: ", err.message);
-
         });
     }
 
@@ -144,13 +61,6 @@ class MovieItem extends React.Component {
                 <p>Published date: {this.state.movieInfo.published_date}</p>
                 <p>Rating: {this.state.movieInfo.rating}</p>
                 <p>Original Language: {this.state.movieInfo.language}</p>
-                {this.state.added 
-                ? <button onClick={this.removeFromHistory}>
-                    Remove from list
-                </button> 
-                : <button onClick={this.addToHistory}>
-                    Add to list
-                </button> }
             </div>
         ) 
     }

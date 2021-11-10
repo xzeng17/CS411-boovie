@@ -1,8 +1,7 @@
 import React from "react";
 import Card from "./Card";
 
-function CardList(props) {
-  const results = props.results;
+function CardList({ results }) {
   let data = [];
   if (results.data) {
     data = results.data || [];
@@ -11,7 +10,7 @@ function CardList(props) {
   return (
     <div className="result">
       {data.map((item) => (
-        <Card key={"movie_id" in item ? item.movie_id : item.isbn} movie={item} setId={props.setId}/>
+        <Card key={item.id} movie={item} />
       ))}
     </div>
   );

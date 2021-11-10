@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import BookSource from "./BookSource";
 import CardList from "./CardList";
 import SearchBar from "./SearchBar";
-import LadderBoard from "./LadderBoard";
-
-
 function Search(props) {
     const [state, setState] = useState({
         results: []
@@ -18,7 +15,7 @@ function Search(props) {
             return {...prevState, results: results}
         })
         // console.log("results are:");
-        console.log(results);
+        // console.log(results);
     }
     return (
         <div>
@@ -27,9 +24,8 @@ function Search(props) {
                     Search For Books and Movies
                 </h2>
                 <SearchBar onSearch={onSearch} />
-                <CardList results={state.results} setId={props.setId}/> 
+                <CardList results={state.results} /> 
             </div>
-            <LadderBoard/>
         </div>
     )
 }
