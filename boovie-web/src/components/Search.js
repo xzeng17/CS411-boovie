@@ -18,7 +18,7 @@ function Search(props) {
             return {...prevState, results: results}
         })
         // console.log("results are:");
-        // console.log(results);
+        console.log(results);
     }
     return (
         <div>
@@ -27,7 +27,7 @@ function Search(props) {
                     Search For Books and Movies
                 </h2>
                 <SearchBar onSearch={onSearch} />
-                <CardList results={state.results} /> 
+                <CardList results={state.results} setId={props.setId}/> 
             </div>
             <LadderBoard/>
         </div>

@@ -47,7 +47,7 @@ function Navbar(props) {
                     <UserProfile isLoggedIn={isLoggedIn} userRole={userRole}/>
                 </Route>
                 <Route path="/Search">
-                    <Search />
+                    <Search setId={setId}/>
                 </Route>
                 <Route path="/BookHistory">
                     <BookHistory />
