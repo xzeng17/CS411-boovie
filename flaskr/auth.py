@@ -58,7 +58,8 @@ def login(conn, data_json):
 
     resp = {
         "TOKEN": encoded,
-        "ROLE": existed_user['role']
+        "ROLE": existed_user['role'],
+        "USEREMAIL": email
     }
     sql.close(conn)
     return Response(json.dumps(resp), status=200, mimetype='application/json')

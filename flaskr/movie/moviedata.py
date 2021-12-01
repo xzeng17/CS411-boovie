@@ -146,7 +146,7 @@ def init(conn):
             password = os.getenv('DEFAULT_FAKE_USER_PW')
 
             if not sql.get_user_by_email(conn, email):
-                sql.insert_values(conn, "User", [email, auth.md5_encode(password), "user"])
+                sql.insert_values(conn, "User", [email, auth.md5_encode(password), "user", "N/A", "N/A", "N/A"])
 
             #review_id = str(uuid.uuid4())
             review_id = review_inserted # Need to change back
@@ -181,7 +181,7 @@ def init(conn):
 def insert_fake_user(conn, user_id):
     email = user_id+"@fakemail.com"
     password = os.getenv('DEFAULT_FAKE_USER_PW')
-    sql.insert_values(conn, "User", [email, auth.md5_encode(password), "user"])
+    sql.insert_values(conn, "User", [email, auth.md5_encode(password), "user", "N/A", "N/A", "N/A"])
     print("a fake user %s has been inserted", email)
 
 

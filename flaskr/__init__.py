@@ -8,7 +8,7 @@ from . import sql, auth
 from . import sqlschema as schema
 from .movie import moviequery
 from .movie import moviedata
-from .book import bookdata, bookreview
+from .book import bookdata, bookquery
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -105,6 +105,45 @@ def closedb():
     sqlconn.close()
     return "Connection closed"
 
+
+@app.route('/book/history', methods=['GET'])
+def get_book_history():
+    if request.method == 'GET':
+        # authenticate user
+        token = ""
+        try:
+            token = request.headers["Authorization"][7:]
+        except Exception as e:
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+        if not auth.auth_login(sqlconn, token):
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+        # end of authentication
+
+        user_info = auth.decode_token(token)
+
+        data = json.dumps(bookquery.get_book_histories_by_email(sqlconn, user_info["user_email"]), indent=4, sort_keys=True, default=str)
+        return Response(data, status=200, mimetype='application/json')
+
+@app.route('/user/badge', methods = ['GET'])
+def get_user_badge():
+    if request.method == 'GET':
+        # authenticate user
+        token = ""
+        try:
+            token = request.headers["Authorization"][7:]
+        except Exception as e:
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+        if not auth.auth_login(sqlconn, token):
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+        # end of authentication
+
+        user_info = auth.decode_token(token)
+
+        data = json.dumps(moviequery.get_user_bages(sqlconn, user_info["user_email"]), indent=4, sort_keys=True, default=str)
+        return Response(data, status=200, mimetype='application/json')
+
 @app.route('/movie/history', methods=['GET'])
 def get_movie_history():
     if request.method == 'GET':
@@ -124,6 +163,23 @@ def get_movie_history():
         data = json.dumps(moviequery.get_movie_histories_by_email(sqlconn, user_info["user_email"]), indent=4, sort_keys=True, default=str)
         return Response(data, status=200, mimetype='application/json')
 
+
+@app.route('/book/details', methods=['GET'])
+def get_book_details():
+    if request.method == 'GET':
+        # authenticate user
+        token = ""
+        try:
+            token = request.headers["Authorization"][7:]
+        except Exception as e:
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+        if not auth.auth_login(sqlconn, token):
+            return Response({"Not authorized."}, status=401, mimetype='application/json')
+        # end of authentication
+    data = json.dumps(bookquery.get_book_details(sqlconn, request.args.get('book_id')), indent=4, sort_keys=True, default=str)
+    print("data: ", data)
+    return Response(data, status=200, mimetype='application/json')
 
 @app.route('/movie/details', methods=['GET'])
 def get_movie_details():
@@ -152,14 +208,14 @@ def top_users():
     return Response(json.dumps(data, indent=4, sort_keys=True, default=str), status=200, mimetype='application/json')
 
 
-# @app.route('/insertbooks')
-# def insertbooks():
-#     return bookdata.init(sqlconn)
+@app.route('/insertbooks')
+def insertbooks():
+    return bookdata.init(sqlconn)
 
 @app.route('/import')
 def import_data():
-    bookdata.init(sqlconn)
-    bookreview.init(sqlconn)
+    # bookdata.init(sqlconn)
+    # bookreview.init(sqlconn)
     return moviedata.init(sqlconn)
 
 
@@ -172,6 +228,44 @@ def searchbooks():
 @app.route('/getmovies', methods=['GET'])
 def getmovies():
     return sql.getmovies(sqlconn)
+
+@app.route('/book/changeHistory', methods=['GET', 'POST', 'DELETE'])
+def bookHistory():
+    # authenticate user
+    token = ""
+    try:
+        token = request.headers["Authorization"][7:]
+    except Exception as e:
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+
+    if not auth.auth_login(sqlconn, token):
+        return Response({"Not authorized."}, status=401, mimetype='application/json')
+    # end of authentication
+    
+    user_info = auth.decode_token(token)
+    user_email = user_info["user_email"]
+
+    if request.method == 'GET':
+        id = request.args.get('book_id')
+        if bookquery.has_book(sqlconn, user_email, id):
+            return Response("Success", status=200, mimetype='application/json')
+
+    if request.method == 'POST':
+        data_json = json.loads(request.data)
+        print("HEHEHEHEHEHE")
+        print(data_json)
+        if bookquery.add_book(sqlconn, user_email, data_json['book_id']):
+            return Response("Success", status=200, mimetype='application/json')
+
+    if request.method == 'DELETE':
+        data_json = json.loads(request.data)
+        if bookquery.delete_book(sqlconn, user_email, data_json['book_id']):
+            return Response("Success", status=200, mimetype='application/json')
+    return Response({"Bad request."}, status=400, mimetype='application/json')
+
+
+
+
 
 
 @app.route('/movie/changeHistory', methods=['GET', 'POST', 'DELETE'])

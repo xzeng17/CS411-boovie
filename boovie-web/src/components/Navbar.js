@@ -4,6 +4,7 @@ import Search from "./Search.js";
 import BookHistory from "./BookHistory.js";
 import MovieHistory from "./MovieHistory.js";
 import MovieItem from "./MovieItem.js";
+import BookItem from './BookItem';
 import Login from "./Login.js";
 import Register from "./Register.js";
 import React, {useState} from "react";
@@ -50,7 +51,7 @@ function Navbar(props) {
                     <Search setId={setId}/>
                 </Route>
                 <Route path="/BookHistory">
-                    <BookHistory isLoggedIn={isLoggedIn}/>
+                    <BookHistory isLoggedIn={isLoggedIn} userRole={userRole} setId={setId}/>
                 </Route>
                 <Route path="/MovieHistory">
                     <MovieHistory isLoggedIn={isLoggedIn} userRole={userRole} setId={setId}/>
@@ -61,6 +62,9 @@ function Navbar(props) {
                 </Route>
                 <Route path="/MovieItem">
                     <MovieItem movie_id={selectedId} isLoggedIn={isLoggedIn}/>
+                </Route>
+                <Route path="/BookItem">
+                    <BookItem book_id={selectedId} isLoggedIn={isLoggedIn}/>
                 </Route>
             </Switch>
         </Router>
