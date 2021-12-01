@@ -214,7 +214,7 @@ def insertbooks():
 
 @app.route('/import')
 def import_data():
-    # bookdata.init(sqlconn)
+    bookdata.init(sqlconn)
     # bookreview.init(sqlconn)
     return moviedata.init(sqlconn)
 

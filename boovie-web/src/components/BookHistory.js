@@ -99,7 +99,7 @@ class BookHistory extends React.Component {
             <h3>Book History Page</h3>
             <table className="table table-striped table-bordered">
                 <thead>
-                    <tr>
+                    <tr >
                         <th>Title</th>
                         <th>Language</th>
                         <th>Author</th>
@@ -119,12 +119,12 @@ class BookHistory extends React.Component {
 
                 <tbody>
                     {books && books.map(book =>
-                        <tr id="book-item" key={book.book_id} >
+                        <tr id="book-item" key={book.book_id} onClick= {()=>this.handleRedirect(book.book_id)}>
                             <td>{book.title}</td>
                             <td>{book.language}</td>
                             <td>{book.author}</td>
                             <td>{book.description}</td>
-                            <td onClick={()=>{
+                            {/* <td onClick={()=>{
                                     this.deleteItem(book.book_id);
                                     // this.setState(() => ({ 
                                     //     books:books.filter(function(value, index, arr){ 
@@ -132,7 +132,7 @@ class BookHistory extends React.Component {
                                     // })}))
                                     // this.fetchHistory();
                                 }
-                            }>&#10006;</td>
+                            }>&#10006;</td> */}
                         </tr>
                     )}
                 </tbody>

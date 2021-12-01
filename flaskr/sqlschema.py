@@ -4,7 +4,8 @@ from . import auth
 def run(conn):
     conn.ping() # refresh connection
     cursor = conn.cursor()
-    # drop all existing table
+    # drop all existing table and triggers
+
     try:
         stmt = "DROP TABLE IF EXISTS MovieHistory;"
         cursor.execute(stmt)
@@ -24,6 +25,20 @@ def run(conn):
         cursor.execute(stmt)
         stmt = "SET NAMES 'utf8mb4';"
         cursor.execute(stmt)
+
+        stmt = "DROP TRIGGER IF EXISTS oldSchoolBadgeTrigger;"
+        cursor.execute(stmt)
+        stmt = "DROP TRIGGER IF EXISTS FashionBadgeTrigger;"
+        cursor.execute(stmt)
+        stmt = "DROP TRIGGER IF EXISTS keeperBadgeTrigger;"
+        cursor.execute(stmt)
+        stmt = "DROP TRIGGER IF EXISTS DeleteFashionBadgeTrigger;"
+        cursor.execute(stmt)
+        stmt = "DROP TRIGGER IF EXISTS DeleteKeeperBadgeTrigger;"
+        cursor.execute(stmt)
+        stmt = "DROP TRIGGER IF EXISTS DeleteClassicBadgeTrigger;"
+        cursor.execute(stmt)
+
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
 
@@ -156,15 +171,10 @@ def run(conn):
                     if @x > 3 then\
                         UPDATE USER set classic_badge = 'Yes' WHERE\
                         user_email = new.user_email;\
-                    else \
-                        if @x <= 3 then\
-                            UPDATE USER set classic_badge = 'N/A' WHERE\
-                            user_email = new.user_email;\
-                        end if; \
                     end if;\
                 end;\
                 "
-        # cursor.execute(stmt)
+        cursor.execute(stmt)
     # End create classic badge trigger
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
@@ -178,11 +188,6 @@ def run(conn):
                     if @x > 3 then\
                         UPDATE USER set fashion_badge = 'Yes' WHERE\
                         user_email = new.user_email;\
-                    else \
-                        if @x <= 3 then\
-                            UPDATE USER set fashion_badge = 'N/A' WHERE\
-                            user_email = new.user_email;\
-                        end if; \
                     end if;\
                 end;\
                 "
@@ -201,11 +206,6 @@ def run(conn):
                     if @x > 10 then\
                         UPDATE USER set keeper_badge = 'Yes' WHERE\
                         user_email = new.user_email;\
-                    else \
-                        if @x <= 10 then\
-                            UPDATE USER set keeper_badge = 'N/A' WHERE\
-                            user_email = new.user_email;\
-                        end if; \
                     end if;\
                 end;\
                 "
@@ -215,19 +215,14 @@ def run(conn):
         return Response(str(e.args), status=500, mimetype='application/json')
 
     try:
-        # Begin create fashion badge trigger
+        # Begin create delete fashion badge trigger
         stmt = "create trigger DeleteFashionBadgeTrigger after delete on MovieHistory\
                 for each row\
                 begin\
                     set @x = (select count(movie_id) from MovieHistory natural join Movie m where user_email = old.user_email and m.published_date > 20100101);\
-                    if @x > 3 then\
-                        UPDATE USER set fashion_badge = 'Yes' WHERE\
+                    if @x <= 3 then\
+                        UPDATE USER set fashion_badge = 'N/A' WHERE\
                         user_email = old.user_email;\
-                    else \
-                        if @x <= 3 then\
-                            UPDATE USER set fashion_badge = 'N/A' WHERE\
-                            user_email = old.user_email;\
-                        end if; \
                     end if;\
                 end;\
                 "
@@ -266,40 +261,30 @@ def run(conn):
                 for each row\
                 begin\
                     set @x = (select count(movie_id) from MovieHistory natural join Movie m where user_email = old.user_email and m.published_date > 20100101);\
-                    if @x > 3 then\
-                        UPDATE USER set classic_badge = 'Yes' WHERE\
+                    if @x <= 10 then\
+                        UPDATE USER set keeper_badge = 'N/A' WHERE\
                         user_email = old.user_email;\
-                    else \
-                        if @x <= 3 then\
-                            UPDATE USER set classic_badge = 'N/A' WHERE\
-                            user_email = old.user_email;\
-                        end if; \
                     end if;\
                 end;\
                 "
-        # cursor.execute(stmt)
+        cursor.execute(stmt)
 
     # End create fashion badge trigger
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
     try:
-        # Begin create fashion badge trigger
+        # Begin create Delete Classic Badge Trigger
         stmt = "create trigger DeleteClassicBadgeTrigger after delete on MovieHistory\
                 for each row\
                 begin\
                     set @x = (select count(movie_id) from MovieHistory natural join Movie m where user_email = old.user_email and m.published_date < 19700101);\
-                    if @x > 3 then\
-                        UPDATE USER set classic_badge = 'Yes' WHERE\
+                    if @x <= 3 then\
+                        UPDATE USER set classic_badge = 'N/A' WHERE\
                         user_email = old.user_email;\
-                    else \
-                        if @x <= 3 then\
-                            UPDATE USER set fashion_badge = 'N/A' WHERE\
-                            user_email = old.user_email;\
-                        end if; \
-                    end if;\
+                    end if; \
                 end;\
                 "
-        # cursor.execute(stmt)
+        cursor.execute(stmt)
     # End create fashion badge trigger
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
