@@ -15,6 +15,13 @@ def get_movie_details(conn, movie_id)->dict:
     return find_KV_pairs_with_stmt(conn, stmt)[0]
 
 
+def get_user_bages(conn, user_email)->dict:
+    print("get badge called")
+    conn.ping()
+    stmt = "SELECT classic_badge, fashion_badge, keeper_badge from user WHERE user_email = '{0}'".format(user_email)
+    return find_KV_pairs_with_stmt(conn, stmt)[0]
+
+
 # Find the top users who watches the most number of movies rated over 3 stars
 def top_3_user_watching_3point_movie(conn):
     stmt = "SELECT user_email \
@@ -122,3 +129,5 @@ def delete_movie(conn, user_email, movie_id)->bool:
         return False
     sql.close(conn)
     return True
+
+        

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from 'react-router-dom'
 import Axios from 'axios';
 
@@ -11,6 +11,39 @@ function UserProfile(props) {
     const [new_password, setNewPW] = useState('')
     const [new_repeatpassword, setNewRepeatPW] = useState('')
     const [disabled, setDisabled] = useState(false)
+    const [badgeInfo, setBadgeInfo] = useState('')
+    const [userEmail, setEmail] = useState(localStorage.getItem("USEREMAIL") ? localStorage.getItem("USEREMAIL") : null);
+
+    const fetchBadge = ()=> {
+        console.log(userEmail)
+        const opt = {
+            method: "GET",
+            url: LOCALHOST_URL+"user/badge?user_email="+ userEmail,
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("TOKEN_KEY"),
+                "Content-Type": "application/json"
+            }
+        };
+
+        Axios(opt)
+        .then((res) => {
+            
+            if (res.status === 200) {
+                setBadgeInfo(res.data)
+                console.log("BADGE INFO =====>")
+                console.log(res.data)
+                console.log(badgeInfo)
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            console.log("fail to fetch user badge")
+        });
+    }
+
+    useEffect(() => {
+        fetchBadge()
+    }, [0])
 
     const submitChange = () => {
         if (old_password==='' || new_password==='' || new_repeatpassword==='') {
@@ -70,7 +103,19 @@ function UserProfile(props) {
 
             {isLoggedIn ? 
                 <div>
-                    You are logged in as {userRole}!
+                    <p> You are logged in as {userRole}! </p>
+                    {
+                        badgeInfo.classic_badge === "Yes" &&
+                        <p> You like many old movies, we grant you an Old School Badge ! </p>
+                    }
+                    {
+                        badgeInfo.fashion_badge === "Yes" &&
+                        <p> You like many new movies, we grant you a Fashion Badge ! </p>
+                    }
+                    {
+                        badgeInfo.keeper_badge === "Yes" &&
+                        <p> You've collected many movies, we grant you a Keeper Badge ! </p>
+                    }
                 </div>
                 :
                 <div>
