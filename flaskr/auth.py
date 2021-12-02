@@ -16,7 +16,7 @@ def register(conn, data_json):
         password    = data_json['Password']
         role        = data_json['Role']
         existed_user = []
-
+        
         try:
             sql.reconnect(conn)
             existed_user = sql.get_user_by_email(conn, email)
@@ -26,11 +26,14 @@ def register(conn, data_json):
 
         if existed_user:
             sql.close(conn)
+            print("User email already exists")
             return Response({"User email already exists"}, status=403, mimetype='application/json')
         
         try:
             sql.reconnect(conn)
-            sql.insert_string_values(conn, 'User', [email, md5_encode(password), role])
+            print([email, md5_encode(password), role])
+            sql.insert_string_values(conn, 'User', [email, md5_encode(password), role, 'N/A', 'N/A', 'N/A'])
+            
         except Exception as e:
             sql.close(conn)
             return Response(str(e.args), status=500, mimetype='application/json')

@@ -38,6 +38,8 @@ def run(conn):
         cursor.execute(stmt)
         stmt = "DROP TRIGGER IF EXISTS DeleteClassicBadgeTrigger;"
         cursor.execute(stmt)
+        stmt = "DROP PROCEDURE IF EXISTS assignBadge;"
+        cursor.execute(stmt)
 
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
@@ -286,6 +288,76 @@ def run(conn):
                 "
         cursor.execute(stmt)
     # End create fashion badge trigger
+    except Exception as e:
+        return Response(str(e.args), status=500, mimetype='application/json')
+
+    try:
+        # Begin create Stored Procedure assignBadge
+        stmt = "DELIMITER //\
+        \
+        CREATE PROCEDURE assignBadge()\
+        BEGIN\
+            DECLARE userEmail VARCHAR(255);\
+            DECLARE userPassword VARCHAR(255);\
+            DECLARE userRole VARCHAR(255);\
+            DECLARE classicBadge VARCHAR(255);\
+            DECLARE fashionBadge VARCHAR(255);\
+            DECLARE keeperBadge VARCHAR(255);\
+            \
+            DECLARE userCur CURSOR FOR (SELECT * FROM User);\
+            \
+            OPEN userCur;\
+            BEGIN\
+                DECLARE exitFlag BOOLEAN DEFAULT False;\
+                DECLARE CONTINUE HANDLER FOR NOT FOUND\
+                    SET exitFlag = True;\
+                cloop: LOOP\
+                FETCH userCur INTO userEmail, userPassword, userRole, classicBadge, fashionBadge, keeperBadge;\
+                \
+                IF userEmail = NULL THEN\
+                    LEAVE cloop;\
+                ELSEIF exitFlag THEN\
+                    LEAVE cloop;\
+                END IF;\
+                \
+                SET @totalMovies = (SELECT COUNT(movie_id) \
+                FROM user NATURAL JOIN MovieHistory NATURAL JOIN Movie\
+                WHERE user_email = userEmail\
+                );\
+                SET @totalOldMovies = (SELECT COUNT(movie_id) \
+                FROM user NATURAL JOIN MovieHistory NATURAL JOIN Movie\
+                WHERE user_email = userEmail AND published_date < '1970-01-01'\
+                );\
+                SET @totalNewMovies = (SELECT COUNT(movie_id) \
+                FROM user NATURAL JOIN MovieHistory NATURAL JOIN Movie\
+                WHERE user_email = userEmail AND published_date > '2010-01-01'\
+                );\
+                \
+                IF  @totalMovies > 10 THEN\
+                    UPDATE user\
+                    SET keeper_badge = 'Yes'\
+                    WHERE user_email = userEmail;\
+                END IF;\
+                \
+                IF  @totalOldMovies > 3 THEN\
+                    UPDATE user\
+                    SET classic_badge = 'Yes'\
+                    WHERE user_email = userEmail;\
+                END IF;\
+                \
+                IF  @totalNewMovies > 3 THEN\
+                    UPDATE user\
+                    SET fashion_badge = 'Yes'\
+                    WHERE user_email = userEmail;\
+                END IF;\
+                \
+                END LOOP cloop;\
+            END;\
+            CLOSE userCur;\
+        END //\
+        DELIMITER ;"
+        cursor.execute(stmt)
+    # End create Stored Procedure assignBadge
     except Exception as e:
         return Response(str(e.args), status=500, mimetype='application/json')
 

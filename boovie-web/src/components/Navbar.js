@@ -7,6 +7,7 @@ import MovieItem from "./MovieItem.js";
 import BookItem from './BookItem';
 import Login from "./Login.js";
 import Register from "./Register.js";
+import Manager from "./Manager.js";
 import React, {useState} from "react";
 import {
     BrowserRouter as Router,
@@ -41,6 +42,10 @@ function Navbar(props) {
                     {isLoggedIn
                         ? <u className="Top-bar-button" onClick={handleLogout}>Logout</u>
                         : <Link className="Top-bar-button" to="/Login">Login</Link>}
+                    {isLoggedIn && userRole === 'manager'
+                        ? <Link className="Top-bar-button" to="/Manager">Hello Manager</Link>
+                        : <></>
+                    }
                 </ul>
             </div>
             <Switch>
@@ -57,6 +62,7 @@ function Navbar(props) {
                     <MovieHistory isLoggedIn={isLoggedIn} userRole={userRole} setId={setId}/>
                 </Route>
                 <Route path="/Login" render={showLogin} />
+                <Route path="/Manager" render={()=>isLoggedIn && userRole === 'manager' ? <Manager /> : <></>} />
                 <Route path="/Register">
                     <Register />
                 </Route>

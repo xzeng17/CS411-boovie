@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import json
 
-from . import sql, auth
+from . import sql, managersql, auth
 from . import sqlschema as schema
 from .movie import moviequery
 from .movie import moviedata
@@ -22,7 +22,30 @@ sqlconn = sql.connect_MySQL(app)
 def hello():
     return 'Hello, SauerkrautFishes!'
 
-#  
+@app.route('/managebadges', methods=['PUT', 'DELETE'])
+def manage_badges():
+    if "Authorization" not in request.headers or \
+        not auth.auth_login(sqlconn, request.headers["Authorization"][7:])\
+        or 1 == 2:
+        return Response({"Unauthorized user."}, status=401, mimetype='application/json')
+    token = ""
+    try:
+        token = request.headers["Authorization"][7:]
+    except Exception as e:
+            return Response({"Unauthorized user."}, status=401, mimetype='application/json')
+    user_info = auth.decode_token(token)
+
+    if user_info["role"] != "manager":
+        return Response({"Unauthorized user."}, status=401, mimetype='application/json')
+
+    if request.method == 'PUT':
+        managersql.update_badges(sqlconn)
+        return Response({"Badges Updated"}, status=200, mimetype='application/json')
+
+    if request.method == 'DELETE':
+        managersql.delete_badges(sqlconn)
+        return Response({"Badges deleted"}, status=200, mimetype='application/json')
+
 
 @app.route('/team')
 def team():
